@@ -37,7 +37,8 @@ public class Admin extends SubCommand {
 				new ForceJoin(),
 				new SetRank(),
 				new Set(),
-				new Energy()
+				new Energy(),
+				new Warpoints()
 		};
 	}
 

@@ -13,10 +13,10 @@ import me.rey.clans.enums.MathAction;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.core.utils.Text;
 
-public class Energy extends SubCommand {
+public class Warpoints extends SubCommand {
 
-	public Energy() {
-			super("energy", "Edit a Clan's energy value", "/c x energy <set|add|remove> <Clan> <Value>", ClansRank.NONE, CommandType.STAFF, true);
+	public Warpoints() {
+		super("warpoints", "Edit your Clan's warpoints on another", "/c x warpoints <add|remove> <Clan> <Value>", ClansRank.NONE, CommandType.STAFF, true);
 	}
 
 	@Override
@@ -27,20 +27,21 @@ public class Energy extends SubCommand {
 		}
 		
 		MathAction action = null;
-		int energy = -1;
+		int toAdd = -1;
 		for(MathAction tAction : MathAction.values()) {
+			if(tAction == MathAction.SET) continue;
 			if(tAction.name().equalsIgnoreCase(args[0])) action = tAction;
 		}
 		
 		if(Text.isInteger(args[2]))
-			energy = Integer.parseInt(args[2]);
+			toAdd = Integer.parseInt(args[2]);
 		
-		if(action == null || energy == -1) {
+		if(action == null || toAdd == -1) {
 			this.sendUsage();
 			return;
 		}
 		
-		if(energy < 0) {
+		if(toAdd < 0) {
 			ErrorCheck.invalidNumber(sender);
 			return;
 		}
@@ -50,14 +51,18 @@ public class Energy extends SubCommand {
 			return;
 		}
 		
-		Clan clan = this.sql().getClan(args[1]);
-		long toSet = action.calc((int) clan.getEnergy(), energy) <= 0 ? 0 : action.calc((int) clan.getEnergy(), energy);
+		Clan clan = this.sql().getClan(args[1]), self = new ClansPlayer((Player) sender).getClan();
+		long currentWarpoints = self.getWarpointsOnClan(clan.getUniqueId());
 		
-		clan.setEnergy(toSet);
+		long toSet = action.calc(currentWarpoints, toAdd);
+		
+		self.setWarpoint(clan.getUniqueId(), toSet);
+		this.sql().saveClan(self);
+		clan.setWarpoint(self.getUniqueId(), -toSet);
 		this.sql().saveClan(clan);
 		
-		clan.announceToClan("Your Energy has been set to: &s" + toSet + "&r.");
-		new ClansPlayer((Player) sender).sendMessageWithPrefix("Staff", "You have set energy of &s" + clan.getName() + " &rto: &s" + toSet + "&r.");
+		clan.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", self.getName(), -toSet));
+		self.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", clan.getName(), toSet));
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import me.rey.clans.clans.ClansPlayer;
-import me.rey.clans.packets.ActionBar;
 import me.rey.clans.packets.Title;
 import me.rey.core.classes.abilities.AbilityType;
 import me.rey.core.events.customevents.AbilityUseEvent;
