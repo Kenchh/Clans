@@ -1,0 +1,9 @@
+main: me.rey.clans.Main
+name: Clans
+version: 1.0.0
+author: rey
+depend: [Warriors, ReinforcedCore, Parser]
+commands:
+    c:
+        usage: /<command>
+        aliases: [clan, clans, faction, factions]
