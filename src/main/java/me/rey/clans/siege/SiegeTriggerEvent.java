@@ -1,7 +1,6 @@
 package me.rey.clans.siege;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.ArrayList;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
@@ -35,6 +34,7 @@ public class SiegeTriggerEvent implements Listener {
 	
 	@EventHandler
 	public void onOpenContainer(ContainerOpenEvent e) {
+		System.out.println("passed container event");
 		if(!isInSiegerTerritory(e.getPlayer(), e.getContainer())) return;
 		
 		e.setAllowed(true);
@@ -64,8 +64,12 @@ public class SiegeTriggerEvent implements Listener {
 		if(!Siege.sieges.containsKey(self.getUniqueId())) return false;
 		if(Siege.sieges.get(self.getUniqueId()) == null || Siege.sieges.get(self.getUniqueId()).isEmpty()) return false;
 		
-		Set<UUID> currentlySieging = Siege.sieges.get(self.getUniqueId());
-		return currentlySieging.contains(on.getUniqueId());
+		ArrayList<Siege> currentlySieging = Siege.sieges.get(self.getUniqueId());
+		for(Siege siege : currentlySieging) {
+			if(siege.getClanSieged().getUniqueId().equals(on.getUniqueId()))
+				return true;
+		}
+		return false;
 		
 	}
 

@@ -1,9 +1,6 @@
 package me.rey.clans.siege;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -32,49 +29,36 @@ public class SiegeRunnable extends BukkitRunnable {
 	public void run() {
 
 		/*
-		 * NOT displaying action bar if the clan is SIEGING more than 1 clan
-		 */
-		Set<UUID> currentlySieging = Siege.sieges.get(sieging.getUniqueId()) == null ? new HashSet<UUID>() : Siege.sieges.get(sieging.getUniqueId());
-		if(!currentlySieging.contains(sieged.getUniqueId())) return;
-		Iterator<UUID> cSieging = currentlySieging.iterator();
-		while(cSieging.hasNext()) {
-			UUID next = cSieging.next();
-			if(next.equals(sieged.getUniqueId())) {
-				Clan newSieger = Main.getInstance().getSQLManager().getClan(sieging.getUniqueId());
-				for(UUID uuid : newSieger.getPlayers().keySet()) {
-					ClansPlayer cp = new ClansPlayer(uuid);
-					if(!cp.isOnline()) continue;
-					new ActionBar(Text.color("&cYou are sieging &a" + sieged.getName())).send(cp.getPlayer());
-				}
-			}
-			return;
-		}
-		
-		/*
 		 * NOT displaying action bar if the clan is being sieged by more than 1 other clan(s)
 		 */
 		
-		ArrayList<UUID> siegersOnSelf = new ArrayList<UUID>();
-		for(UUID siegers : Siege.sieges.keySet()) {
-			Set<UUID> siegerSieging = Siege.sieges.get(siegers) == null ? new HashSet<UUID>() : Siege.sieges.get(siegers);
-			Iterator<UUID> siegerIterator = siegerSieging.iterator();
-			while(siegerIterator.hasNext()) {
-				UUID uuid = siegerIterator.next();
-				if(uuid.equals(sieged.getUniqueId()))
-					siegersOnSelf.add(uuid);
+		Clan newSieged = Main.getInstance().getSQLManager().getClan(sieged.getUniqueId());
+		Iterator<Siege> iterator = newSieged.getClansSiegingSelf().iterator();
+		if(iterator.hasNext() || !sieging.getUniqueId().equals(iterator.next().getClanSieging().getUniqueId())) {
+			for(UUID uuid : newSieged.getPlayers().keySet()) {
+				
+				ClansPlayer cp = new ClansPlayer(uuid);
+				if(!cp.isOnline()) continue;
+				new ActionBar(Text.color("&cYou are being sieged")).send(cp.getPlayer());
 			}
 		}
-		
-		Clan newSieged = Main.getInstance().getSQLManager().getClan(sieged.getUniqueId());
-		for(UUID uuid : newSieged.getPlayers().keySet()) {
-			if(!sieging.getUniqueId().equals(siegersOnSelf.get(0))) break;
-			
-			ClansPlayer cp = new ClansPlayer(uuid);
-			if(!cp.isOnline()) continue;
-			System.out.println("being sieged");
-			new ActionBar(Text.color("&cYou are being sieged")).send(cp.getPlayer());
-		}
 		// END
+		
+		/*
+		 * NOT displaying action bar if the clan is SIEGING more than 1 clan
+		 */
+		
+		Clan newSieger = Main.getInstance().getSQLManager().getClan(sieging.getUniqueId());
+		if(newSieger.isBeingSieged()) return;
+		Iterator<Siege> iterator2 = newSieger.getClansSiegedBySelf().iterator();
+		if(iterator2.hasNext() && sieged.getUniqueId().equals(iterator2.next().getClanSieged().getUniqueId())) {
+			for(UUID uuid : newSieger.getPlayers().keySet()) {
+				
+				ClansPlayer cp = new ClansPlayer(uuid);
+				if(!cp.isOnline()) continue;
+				new ActionBar(Text.color("&cYou are sieging &a" + sieged.getName())).send(cp.getPlayer());
+			}
+		}
 		
 	}
 

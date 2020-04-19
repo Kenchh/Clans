@@ -50,7 +50,7 @@ public class Shops implements Listener {
 			new Title("", Text.color("&cUnsafe for &a" + seconds + " &cseconds"), 0, 5, 0).send(p);
 		}
 	}
-	
+
 	@EventHandler (priority = EventPriority.LOWEST)
 	public void onAbilityUse(AbilityUseEvent e) {
 		if(!disallowedAbilities.contains(e.getAbility().getAbilityType())) return;
@@ -62,7 +62,7 @@ public class Shops implements Listener {
 		}
 	}
 	
-	@EventHandler
+	@EventHandler (priority = EventPriority.LOWEST)
 	public void onDamage(DamageEvent e) {
 		if (!(e.getDamagee() instanceof Player))
 			return;

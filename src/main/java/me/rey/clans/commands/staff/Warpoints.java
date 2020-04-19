@@ -28,6 +28,12 @@ public class Warpoints extends SubCommand {
 			return;
 		}
 		
+		ClansPlayer cp = new ClansPlayer((Player) sender);
+		if(!cp.hasClan()) {
+			ErrorCheck.noClan(sender);
+			return;
+		}
+		
 		MathAction action = null;
 		int toAdd = -1;
 		for(MathAction tAction : MathAction.values()) {
