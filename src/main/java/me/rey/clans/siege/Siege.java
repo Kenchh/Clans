@@ -1,8 +1,7 @@
 package me.rey.clans.siege;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,25 +16,56 @@ import me.rey.clans.utils.Text;
 public class Siege {
 	
 	// Sieger -> Set<Clans they siege>
-	public static HashMap<UUID, Set<UUID>> sieges = new HashMap<>();
+	public static HashMap<UUID, ArrayList<Siege>> sieges = new HashMap<>();
 	
 	private Clan sieger, sieged;
+	private SiegeRunnable runnable;
 	
 	public Siege(Clan sieger, Clan sieged) {
 		this.sieger = sieger;
 		this.sieged = sieged;
+
+		runnable = new SiegeRunnable(sieger, sieged);
+	}
+	
+	public void end() {
+		if(this.runnable != null)
+			runnable.cancel();
+		
+		ArrayList<Siege> toRemove = sieges.get(sieger.getUniqueId()) == null ? new ArrayList<>() : sieges.get(sieger.getUniqueId());
+		toRemove.remove(this);
+		sieges.put(sieger.getUniqueId(), toRemove);
+		runnable.cancel();
+		
+		Clan newSieged = Main.getInstance().getSQLManager().getClan(sieged.getUniqueId());
+		Clan newSieger = Main.getInstance().getSQLManager().getClan(sieger.getUniqueId());
+		
+		try {
+			for(UUID uuid : newSieged.getPlayers().keySet()) {
+				ClansPlayer cp = new ClansPlayer(uuid);
+				if(!cp.isOnline()) continue;
+				new Title(Text.color("&qSIEGE ENDED!"), Text.color("&rBy: &e" + sieger.getName()), 2, 2 * 20, 5).send(cp.getPlayer());
+			}
+			
+			for(UUID uuid : newSieger.getPlayers().keySet()) {
+				ClansPlayer cp = new ClansPlayer(uuid);
+				if(!cp.isOnline()) continue;
+				new Title(Text.color("&qSIEGE ENDED!"), Text.color("&rOn: &e" + sieged.getName()), 2, 2 * 20, 5).send(cp.getPlayer());
+			}
+		} catch (Exception ignore) {
+			
+		}
 	}
 	
 	public void start() {
 		
-		Set<UUID> currentlySieging = sieges.get(sieger.getUniqueId()) == null ? new HashSet<UUID>() : sieges.get(sieger.getUniqueId());
+		ArrayList<Siege> currentlySieging = sieges.get(sieger.getUniqueId()) == null ? new ArrayList<>() : sieges.get(sieger.getUniqueId());
 		
-		if(currentlySieging.contains(sieged.getUniqueId())) return;
-		currentlySieging.add(sieged.getUniqueId());
+		if(currentlySieging.contains(this)) return;
+		currentlySieging.add(this);
 		
 		Siege.sieges.put(sieger.getUniqueId(), currentlySieging);
 		
-		SiegeRunnable runnable = new SiegeRunnable(sieger, sieged);
 		runnable.start();
 		
 		for(UUID uuid : sieger.getPlayers().keySet()) {
@@ -55,25 +85,7 @@ public class Siege {
 			
 			@Override
 			public void run() {
-				Set<UUID> toRemove = sieges.get(sieger.getUniqueId()) == null ? new HashSet<UUID>() : sieges.get(sieger.getUniqueId());
-				toRemove.remove(sieged.getUniqueId());
-				runnable.cancel();
-				
-				Clan newSieged = Main.getInstance().getSQLManager().getClan(sieged.getUniqueId());
-				Clan newSieger = Main.getInstance().getSQLManager().getClan(sieger.getUniqueId());
-				
-				for(UUID uuid : newSieged.getPlayers().keySet()) {
-					ClansPlayer cp = new ClansPlayer(uuid);
-					if(!cp.isOnline()) continue;
-					new Title(Text.color("&qSIEGE ENDED!"), "", 2, 2 * 20, 5).send(cp.getPlayer());
-				}
-				
-				for(UUID uuid : newSieger.getPlayers().keySet()) {
-					ClansPlayer cp = new ClansPlayer(uuid);
-					if(!cp.isOnline()) continue;
-					new Title(Text.color("&qSIEGE ENDED!"), "", 2, 2 * 20, 5).send(cp.getPlayer());
-				}
-				
+				end();
 			}
 			
 		}.runTaskLater(Main.getInstance(), (References.SIEGE_MINUTES * 60) * 20);

@@ -10,6 +10,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 import me.rey.clans.Main;
+import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.References;
 
 public class Clan {
@@ -439,4 +440,34 @@ public class Clan {
 		this.clanRelations = relations;
 	}
 	
+	/*
+	 * SIEGE SYSTEM
+	 */
+	
+	public boolean isBeingSieged() {
+		return getClansSiegingSelf() != null && !getClansSiegingSelf().isEmpty();
+	}
+	
+	public ArrayList<Siege> getClansSiegingSelf() {
+		ArrayList<Siege> siegersOnSelf = new ArrayList<Siege>();
+		for(UUID siegers : Siege.sieges.keySet()) {
+			ArrayList<Siege> siegerSieging = Siege.sieges.get(siegers) == null ? new ArrayList<>() : Siege.sieges.get(siegers);
+			Iterator<Siege> siegerIterator = siegerSieging.iterator();
+			while(siegerIterator.hasNext()) {
+				Siege found = siegerIterator.next();
+				if(found.getClanSieged().getUniqueId().equals(this.getUniqueId())) {
+					siegersOnSelf.add(found);
+				}
+			}
+		}
+		return siegersOnSelf;
+	}
+	
+	public boolean isSiegingOther() {
+		return getClansSiegedBySelf() != null && !getClansSiegedBySelf().isEmpty();
+	}
+	
+	public ArrayList<Siege> getClansSiegedBySelf(){
+		return Siege.sieges.get(this.getUniqueId()) == null ? new ArrayList<>() : Siege.sieges.get(this.getUniqueId());
+	}
 }
