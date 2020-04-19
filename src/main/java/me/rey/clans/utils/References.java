@@ -14,6 +14,7 @@ public class References {
 	public static final long MAX_ENERGY = 10000;
 	public static final double MAX_ENERGY_DAYS = 7.0;
 	public static final Material HOME_BLOCK = Material.BEACON;
+	public static final int SIEGE_MINUTES = 1;
 
 	private static final String staffRankName = Main.getInstance().getConfig().getString("staff-permission-rank");
 	

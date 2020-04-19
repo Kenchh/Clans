@@ -1,5 +1,11 @@
 package me.rey.clans.events;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,11 +27,14 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.InventoryHolder;
 
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
+import me.rey.clans.events.custom.ContainerOpenEvent;
+import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
 
@@ -37,17 +46,26 @@ public class ClaimProtection implements Listener {
 	 * BlockPistonEvent - BlockBurnEvent - LeavesDecayEvent - WeatherChangeEvent -
 	 * EnchantItemEvent - PrepareItemEnchantEvent - PlayerFishEvent
 	 */
+	
+	List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER);
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
-		if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-			return;
-		if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(References.HOME_BLOCK))
-			e.setCancelled(true);
+		if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
+		if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(References.HOME_BLOCK)) e.setCancelled(true);
 
 		Block clicked = e.getClickedBlock();
 
 		if (this.isInOtherClaim(e.getPlayer(), clicked) != null) {
+
+
+			if(clicked instanceof InventoryHolder && containers.contains(clicked.getType())) {
+				ContainerOpenEvent event = new ContainerOpenEvent(e.getPlayer(), clicked, false);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				if(event.isAllowed())
+					return;
+			}
+			
 			ErrorCheck.noPermissionInClaim(e.getPlayer(), this.isInOtherClaim(e.getPlayer(), clicked));
 			e.setCancelled(true);
 			return;
@@ -222,6 +240,20 @@ public class ClaimProtection implements Listener {
 			return null;
 
 		return Main.getInstance().getSQLManager().getClan(Main.territory.get(chunk));
+	}
+	
+	public boolean isInSiegerTerritory(Player player, Block block) {
+		if(!(new ClansPlayer(player).hasClan())) return false;
+		if(isInOtherClaim(player, block) == null) return false;
+		
+		Clan on = isInOtherClaim(player, block);
+		Clan self = new ClansPlayer(player).getClan();
+		if(!Siege.sieges.containsKey(self.getUniqueId())) return false;
+		if(Siege.sieges.get(self.getUniqueId()) == null || Siege.sieges.get(self.getUniqueId()).isEmpty()) return false;
+		
+		Set<UUID> currentlySieging = Siege.sieges.get(self.getUniqueId());
+		return currentlySieging.contains(on.getUniqueId());
+		
 	}
 
 }

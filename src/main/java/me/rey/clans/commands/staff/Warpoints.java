@@ -1,5 +1,6 @@
 package me.rey.clans.commands.staff;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -10,6 +11,7 @@ import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
 import me.rey.clans.enums.MathAction;
+import me.rey.clans.events.custom.WarpointChangeEvent;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.core.utils.Text;
 
@@ -63,6 +65,8 @@ public class Warpoints extends SubCommand {
 		
 		clan.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", self.getName(), -toSet));
 		self.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", clan.getName(), toSet));
+		WarpointChangeEvent event = new WarpointChangeEvent(self, clan, toSet);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

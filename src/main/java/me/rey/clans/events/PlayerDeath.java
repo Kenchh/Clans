@@ -65,7 +65,7 @@ public class PlayerDeath implements Listener {
 			toLoseWP.announceToClan("&9(!) &7Your clan has &qLOST &ra War Point to &s" + color + toGiveWP.getName() + " &7(" + color + sLost + lost + "&7).", false);
 			toGiveWP.announceToClan("&9(!) &7Your clan has &wGAINED &ra War Point on &s" + color + toLoseWP.getName() + " &7(" + color + sWon + won + "&7).", false);
 			
-			WarpointChangeEvent event = new WarpointChangeEvent(k, player, won);
+			WarpointChangeEvent event = new WarpointChangeEvent(toGiveWP, toLoseWP, won);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			
 			sql.saveClan(toGiveWP);
