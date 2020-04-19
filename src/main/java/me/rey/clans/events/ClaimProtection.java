@@ -2,8 +2,6 @@ package me.rey.clans.events;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -34,7 +32,6 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.events.custom.ContainerOpenEvent;
-import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
 
@@ -242,18 +239,4 @@ public class ClaimProtection implements Listener {
 		return Main.getInstance().getSQLManager().getClan(Main.territory.get(chunk));
 	}
 	
-	public boolean isInSiegerTerritory(Player player, Block block) {
-		if(!(new ClansPlayer(player).hasClan())) return false;
-		if(isInOtherClaim(player, block) == null) return false;
-		
-		Clan on = isInOtherClaim(player, block);
-		Clan self = new ClansPlayer(player).getClan();
-		if(!Siege.sieges.containsKey(self.getUniqueId())) return false;
-		if(Siege.sieges.get(self.getUniqueId()) == null || Siege.sieges.get(self.getUniqueId()).isEmpty()) return false;
-		
-		Set<UUID> currentlySieging = Siege.sieges.get(self.getUniqueId());
-		return currentlySieging.contains(on.getUniqueId());
-		
-	}
-
 }

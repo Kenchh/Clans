@@ -1,5 +1,6 @@
 package me.rey.clans.clans;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import me.rey.clans.Main;
 import me.rey.clans.database.SQLManager;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.Text;
 import me.rey.core.Warriors;
 import me.rey.core.players.PlayerHitCache;
@@ -98,6 +100,31 @@ public class ClansPlayer {
 	
 	public boolean disbandClan() {
 		if(!this.hasClan()) return false;
+		
+		if(this.getClan().isBeingSieged()) {
+			ArrayList<Siege> raidingSelf = new ArrayList<>();
+			
+			for(Siege siege : this.getClan().getClansSiegingSelf()) {
+				raidingSelf.add(siege);
+			}
+			
+			for(Siege siege : raidingSelf) {
+				siege.end();
+			}
+		}
+		
+		if(this.getClan().isSiegingOther()) {
+			ArrayList<Siege> siegingOther = new ArrayList<>();
+			
+			for(Siege siege : this.getClan().getClansSiegedBySelf()) {
+				siegingOther.add(siege);
+			}
+			
+			for(Siege siege : siegingOther) {
+				siege.end();
+			}
+		}
+		
 		this.sql.deleteClan(this.getClan().getUniqueId());
 		this.sendMessageWithPrefix("Success", "You have disbanded your Clan.");
 		return true;
