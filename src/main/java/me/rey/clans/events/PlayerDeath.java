@@ -13,6 +13,7 @@ import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.database.SQLManager;
 import me.rey.clans.events.custom.WarpointChangeEvent;
+import me.rey.clans.siege.Siege;
 import me.rey.core.events.customevents.DeathEvent;
 import me.rey.core.players.DeathMessage;
 import me.rey.core.players.PlayerHit;
@@ -55,6 +56,21 @@ public class PlayerDeath implements Listener {
 			
 			Clan toGiveWP = killer.getClan();
 			Clan toLoseWP = cp.getClan();
+		
+			boolean isInSiege = false;
+			for(Siege siege : toGiveWP.getClansSiegedBySelf()) {
+				if(siege.getClanSieged().getUniqueId().equals(toLoseWP.getUniqueId()))
+					isInSiege = true;
+			}
+			
+			for(Siege siege : toGiveWP.getClansSiegingSelf()) {
+				if(siege.getClanSieging().getUniqueId().equals(toLoseWP.getUniqueId()))
+					isInSiege = true;
+			}
+			
+			
+			// Cancelling Warpoint in siege
+			if(isInSiege) return;
 			
 			long lost = toLoseWP.setWarpoint(toGiveWP.getUniqueId(), toLoseWP.getWarpointsOnClan(toGiveWP.getUniqueId())-1); // Removing WP on clan that died
 			long won = toGiveWP.setWarpoint(toLoseWP.getUniqueId(), toGiveWP.getWarpointsOnClan(toLoseWP.getUniqueId())+1); // Adding WP on clan that got kill
