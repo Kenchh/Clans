@@ -6,7 +6,7 @@ public enum MathAction {
 	ADD(),
 	REMOVE();
 	
-	public int calc(int initial, int toCalc) {
+	public long calc(long initial, long toCalc) {
 		switch(this) {
 		
 		case SET:

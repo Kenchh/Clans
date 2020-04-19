@@ -1,17 +1,19 @@
 package me.rey.clans.events.custom;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import me.rey.clans.clans.Clan;
+
 public class WarpointChangeEvent extends Event {
 
-	private Player killer, player;
+	private Clan killer, player;
 	private long killerWarpoints;
 	
-	public WarpointChangeEvent(Player killer, Player player, long killerWarpoints) {
+	public WarpointChangeEvent(Clan killer, Clan player, long killerWarpoints) {
 		this.killer = killer;
 		this.player = player;
+		this.killerWarpoints = killerWarpoints;
 	}
 	
 	private static final HandlerList HANDLERS = new HandlerList();
@@ -25,7 +27,7 @@ public class WarpointChangeEvent extends Event {
 		return HANDLERS;
 	}
 	
-	public Player getKiller() {
+	public Clan getKiller() {
 		return killer;
 	}
 	
@@ -33,7 +35,7 @@ public class WarpointChangeEvent extends Event {
 		return killerWarpoints;
 	}
 	
-	public Player getPlayer() {
+	public Clan getClan() {
 		return player;
 	}
 	

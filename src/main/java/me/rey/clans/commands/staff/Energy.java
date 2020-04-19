@@ -51,7 +51,7 @@ public class Energy extends SubCommand {
 		}
 		
 		Clan clan = this.sql().getClan(args[1]);
-		int toSet = action.calc((int) clan.getEnergy(), energy) <= 0 ? 0 : action.calc((int) clan.getEnergy(), energy);
+		long toSet = action.calc((int) clan.getEnergy(), energy) <= 0 ? 0 : action.calc((int) clan.getEnergy(), energy);
 		
 		clan.setEnergy(toSet);
 		this.sql().saveClan(clan);

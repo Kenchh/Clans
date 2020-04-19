@@ -30,3 +30,5 @@ libs/
 
 # Config Files
 config.yml
+plugin.yml
+pom.xml

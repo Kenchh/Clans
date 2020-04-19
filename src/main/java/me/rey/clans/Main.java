@@ -29,6 +29,7 @@ import me.rey.clans.events.TerritoryChange;
 import me.rey.clans.features.EnergyHandler;
 import me.rey.clans.features.ServerTerritoriesParse;
 import me.rey.clans.packets.PlayerInfo;
+import me.rey.clans.siege.SiegeTriggerEvent;
 import me.rey.clans.utils.Text;
 
 public class Main extends JavaPlugin {
@@ -152,6 +153,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ClaimProtection(), this);
 		pm.registerEvents(new CombatBaseRelation(), this);
 		pm.registerEvents(new Shops(), this);
+		pm.registerEvents(new SiegeTriggerEvent(), this);
 	}
 	
 	public void loadConfig() {
