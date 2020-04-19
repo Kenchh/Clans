@@ -65,8 +65,14 @@ public class Warpoints extends SubCommand {
 		
 		clan.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", self.getName(), -toSet));
 		self.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", clan.getName(), toSet));
-		WarpointChangeEvent event = new WarpointChangeEvent(self, clan, toSet);
-		Bukkit.getServer().getPluginManager().callEvent(event);
+		
+		if(action == MathAction.REMOVE) {
+			WarpointChangeEvent event = new WarpointChangeEvent(clan, self, -toSet);
+			Bukkit.getServer().getPluginManager().callEvent(event);
+		} else if (action == MathAction.ADD){
+			WarpointChangeEvent event = new WarpointChangeEvent(self, clan, toSet);
+			Bukkit.getServer().getPluginManager().callEvent(event);
+		}
 	}
 
 	@Override

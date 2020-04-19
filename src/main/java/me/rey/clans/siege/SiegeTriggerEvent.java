@@ -23,8 +23,14 @@ public class SiegeTriggerEvent implements Listener {
 		
 		Clan sieger = e.getKiller();
 		Clan sieged = e.getClan();
+		
 		Siege siege = new Siege(sieger, sieged);
 		siege.start();
+		
+		sieger.setWarpoint(sieged.getUniqueId(), 0);
+		sieged.setWarpoint(sieger.getUniqueId(), 0);
+		Main.getInstance().getSQLManager().saveClan(sieger); // saving SIEGER
+		Main.getInstance().getSQLManager().saveClan(sieged); // saving SIEGED
 	}
 	
 	@EventHandler
