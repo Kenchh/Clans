@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -168,8 +167,7 @@ public class ClansPlayer {
 	}
 	
 	public Clan getClanInTerritory() {
-		Chunk chunk = this.getPlayer().getLocation().getChunk();
-		return Main.territory.containsKey(chunk) ? this.sql.getClan(Main.territory.get(chunk)) : null;
+		return Main.getInstance().getClanFromTerritory(this.getPlayer().getLocation().getChunk());
 	}
 	
 	public boolean isInSafeZone() {

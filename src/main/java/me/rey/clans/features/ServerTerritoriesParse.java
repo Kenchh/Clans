@@ -7,6 +7,7 @@ import java.util.Set;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -67,7 +68,7 @@ public class ServerTerritoriesParse implements Listener {
 			if(type.getParser() == null) continue;
 			
 			// matches parser
-			if(e.getParser().equals(type.getParser())) {
+			if(e.getParser().getName().equals(type.getParser().getName())) {
 				if(e.getParsedPoints() == null) continue;
 				Iterator<Block> blocks = e.getParsedPoints().iterator();
 				
@@ -84,6 +85,18 @@ public class ServerTerritoriesParse implements Listener {
 				}
 				
 				Main.getInstance().getSQLManager().saveClan(clan);
+				
+				//deleting thsoe blocks
+				Iterator<Block> toRemove = e.getParsedPoints().iterator();
+				while(toRemove.hasNext()) {
+					Block next = toRemove.next();
+					if(next.getType().equals(e.getParser().getDataBlock())) {
+						next.setType(Material.AIR);
+
+						if(e.getParser().useSponge())
+							next.getRelative(BlockFace.DOWN).setType(Material.AIR);
+					}
+				}
 			}
 		}
 	}

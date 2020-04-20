@@ -41,9 +41,9 @@ public class Main extends JavaPlugin {
 	private SQLManager sql;
 	private static Main instance;
 	public static HashMap<UUID, UUID> adminFakeClans;
-	public static HashMap<Chunk, UUID> territory;
 	public static Set<String> safeZoneCoords;
 	public static ArrayList<UUID> clans;
+	public HashMap<Chunk, UUID> territory;
 	private ServerTerritoriesParse stp;
 	
 	/*
@@ -54,15 +54,17 @@ public class Main extends JavaPlugin {
 		instance = this;
 		adminFakeClans = new HashMap<>();
 		
+		loadConfig();
+		initDatabase();
+		
 		stp = new ServerTerritoriesParse();
 		stp.init();
 		this.pm.registerEvents(stp, this);
 		
-		
-		loadConfig();
-		initDatabase();
 		clans = this.getSQLManager().getClans();
 		safeZoneCoords = this.getSQLManager().getSafeZones();
+		territory = new HashMap<Chunk, UUID>();
+		territory.putAll(this.getSQLManager().loadTerritories());
 		
 		this.registerCommands();
 		this.registerListeners();
@@ -115,8 +117,6 @@ public class Main extends JavaPlugin {
 		Text.log(this, "");
 		Text.log(this, "=====================================");
 		
-		territory = sql.loadTerritories();
-		
 		return sql;
 	}
 	
@@ -165,15 +165,23 @@ public class Main extends JavaPlugin {
 		return Bukkit.getServer().getWorld(this.getConfig().getString("clans-world"));
 	}
 	
-	public Clan getClanFromTerritory(Chunk chunk) {
-		if(!territory.containsKey(chunk))
-			return null;
-		if(!this.getSQLManager().clanExists(territory.get(chunk))) {
-			territory.remove(chunk);
-			return null;
+	public Clan getClanFromTerritory(Chunk c) {
+		
+		for(Chunk chunk : this.territory.keySet()) {
+			if(c.getX() == chunk.getX() && c.getZ() == chunk.getZ()) {
+				
+				UUID uuid = this.territory.get(chunk);
+				if(!this.getSQLManager().clanExists(uuid)) {
+					this.territory.remove(chunk);
+					return null;
+				}
+				
+				Clan toGive = this.getSQLManager().getClan(uuid);
+				return toGive;
+			}
 		}
 		
-		return this.getSQLManager().getClan(territory.get(chunk));
+		return null;
 	}
 
 }

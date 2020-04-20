@@ -724,7 +724,7 @@ public class SQLManager {
 
 			
 			for(Chunk chunk : clan.getTerritory()) {
-				Main.territory.remove(chunk);
+				Main.getInstance().territory.remove(chunk);
 			}
 			
 			ArrayList<UUID> playersToRemove = new ArrayList<UUID>();
@@ -953,47 +953,16 @@ public class SQLManager {
 	}
 	
 	public HashMap<Chunk, UUID> loadTerritories(){
-		HashMap<Chunk, UUID> territories = new HashMap<>();
 		
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet res = null;
-		
-		try {
-			conn = pool.getConnection();
-			String stmt = "SELECT * FROM " + clansDataTable + " WHERE uuid IS NOT NULL";
-			ps = conn.prepareStatement(stmt);
+		HashMap<Chunk, UUID> chunks = new HashMap<Chunk, UUID>();
+		for(UUID uuid : getClans()) {
+			Clan toLoad = this.getClan(uuid);
 			
-			res = ps.executeQuery();
-			
-			while(res.next()) {
-				UUID uuid = UUID.fromString((String) res.getString("uuid"));
-
-				ArrayList<Chunk> territory = new ArrayList<Chunk>();
-				if(res.getString("territory") != null) {
-					JSONObject objTerritory = (JSONObject) new JSONParser().parse(res.getString("territory"));
-					JSONArray arrayTerritory = (JSONArray) objTerritory.get("territory");
-					for(Object entry : arrayTerritory) {
-						String[] coords = ((String) entry).split(";");
-						Chunk chunk = Main.getInstance().getClansWorld().getChunkAt(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]));
-						
-						territory.add(chunk);
-					}
-				}
-				
-				
-				for(Chunk chunk : territory) {
-					territories.put(chunk, uuid);
-				}
-			} 
-			
-			
-		} catch (SQLException | ParseException e) {
-			e.printStackTrace();
-		} finally {
-			pool.close(conn, ps, res);
+			for(Chunk chunk : toLoad.getTerritory()) {
+				chunks.put(chunk, toLoad.getUniqueId());
+			}
 		}
-		return territories;
+		return chunks;
 	}
 	
 	public ArrayList<UUID> getClans(){

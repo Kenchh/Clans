@@ -332,8 +332,7 @@ public class Clan {
 	
 	public boolean addTerritory(Chunk chunk) {
 		if(this.territory.contains(chunk)) return false;
-		if(!Main.territory.containsKey(chunk))
-			Main.territory.put(chunk, this.getUniqueId());
+		Main.getInstance().territory.put(chunk, this.getUniqueId());
 		
 		this.territory.add(chunk);
 		return true;
@@ -341,8 +340,8 @@ public class Clan {
 	
 	public boolean removeTerritory(Chunk chunk) {
 		if(!this.territory.contains(chunk)) return false;
-		if(Main.territory.containsKey(chunk))
-			Main.territory.remove(chunk);
+		if(Main.getInstance().getClanFromTerritory(chunk) != null)
+			Main.getInstance().territory.remove(chunk);
 		
 		this.territory.remove(chunk);
 		return true;
@@ -358,8 +357,8 @@ public class Clan {
 		Iterator<Chunk> chunks = this.getTerritory().iterator();
 		while(chunks.hasNext()) {
 			Chunk next = chunks.next();
-			if(Main.territory.containsKey(next))
-				Main.territory.remove(next);
+			if(Main.getInstance().getClanFromTerritory(next) != null)
+				Main.getInstance().territory.remove(next);
 		}
 		this.territory.clear();
 	}

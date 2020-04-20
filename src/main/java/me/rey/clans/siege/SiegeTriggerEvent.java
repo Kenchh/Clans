@@ -2,7 +2,6 @@ package me.rey.clans.siege;
 
 import java.util.ArrayList;
 
-import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +33,6 @@ public class SiegeTriggerEvent implements Listener {
 	
 	@EventHandler
 	public void onOpenContainer(ContainerOpenEvent e) {
-		System.out.println("passed container event");
 		if(!isInSiegerTerritory(e.getPlayer(), e.getContainer())) return;
 		
 		e.setAllowed(true);
@@ -42,17 +40,9 @@ public class SiegeTriggerEvent implements Listener {
 	
 
 	private Clan isInOtherClaim(Player player, Block block) {
-		Chunk chunk = block.getChunk();
-
-		if (!Main.territory.containsKey(chunk))
-			return null;
-
-		Clan owner = Main.getInstance().getSQLManager().getClan(Main.territory.get(chunk));
-		ClansPlayer cp = new ClansPlayer(player);
-		if (cp.hasClan() && cp.getClan().compare(owner))
-			return null;
-
-		return owner;
+		Clan owner = Main.getInstance().getClanFromTerritory(block.getChunk());
+		ClansPlayer self = new ClansPlayer(player);
+		return owner == null ? null : (self.hasClan() && self.getClan().compare(owner) ? null : owner);
 	}
 	
 	public boolean isInSiegerTerritory(Player player, Block block) {

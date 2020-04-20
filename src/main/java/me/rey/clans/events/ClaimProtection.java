@@ -25,7 +25,6 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.inventory.InventoryHolder;
 
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
@@ -56,7 +55,7 @@ public class ClaimProtection implements Listener {
 		if (this.isInOtherClaim(e.getPlayer(), clicked) != null) {
 
 
-			if(clicked instanceof InventoryHolder && containers.contains(clicked.getType())) {
+			if(containers.contains(clicked.getType())) {
 				ContainerOpenEvent event = new ContainerOpenEvent(e.getPlayer(), clicked, false);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 				if(event.isAllowed())
@@ -79,10 +78,10 @@ public class ClaimProtection implements Listener {
 			return;
 
 		Block broken = e.getBlock();
-		if (this.isInAClaim(e.getPlayer(), broken) == null)
+		if (this.isInAClaim(broken) == null)
 			return;
 
-		Clan other = this.isInAClaim(e.getPlayer(), broken);
+		Clan other = this.isInAClaim(broken);
 		ClansPlayer self = new ClansPlayer(e.getPlayer());
 
 		/*
@@ -93,7 +92,7 @@ public class ClaimProtection implements Listener {
 
 			if (broken.getX() == x && broken.getY() == y && broken.getZ() == z) {
 
-				if (self.hasClan() && self.getClan().compare(this.isInAClaim(e.getPlayer(), broken)) && self.getClan()
+				if (self.hasClan() && self.getClan().compare(this.isInAClaim(broken)) && self.getClan()
 						.getPlayerRank(e.getPlayer().getUniqueId()).getPower() < ClansRank.ADMIN.getPower()) {
 					ErrorCheck.incorrectRank(self.getPlayer(), ClansRank.ADMIN);
 					e.setCancelled(true);
@@ -210,33 +209,17 @@ public class ClaimProtection implements Listener {
 	}
 
 	private Clan isInOtherClaim(Player player, Block block) {
-		Chunk chunk = block.getChunk();
-
-		if (!Main.territory.containsKey(chunk))
-			return null;
-
-		Clan owner = Main.getInstance().getSQLManager().getClan(Main.territory.get(chunk));
-		ClansPlayer cp = new ClansPlayer(player);
-		if (cp.hasClan() && cp.getClan().compare(owner))
-			return null;
-
-		return owner;
+		Clan owner = Main.getInstance().getClanFromTerritory(block.getChunk());
+		ClansPlayer self = new ClansPlayer(player);
+		return owner == null ? null : (self.hasClan() && self.getClan().compare(owner) ? null : owner);
 	}
 
 	private Clan isInClaim(Chunk chunk) {
-		if (!Main.territory.containsKey(chunk))
-			return null;
-
-		Clan owner = Main.getInstance().getSQLManager().getClan(Main.territory.get(chunk));
-		return owner;
+		return Main.getInstance().getClanFromTerritory(chunk);
 	}
 
-	public Clan isInAClaim(Player player, Block block) {
-		Chunk chunk = block.getChunk();
-		if (!Main.territory.containsKey(chunk))
-			return null;
-
-		return Main.getInstance().getSQLManager().getClan(Main.territory.get(chunk));
+	public Clan isInAClaim(Block block) {
+		return isInClaim(block.getChunk());
 	}
 	
 }

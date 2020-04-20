@@ -30,8 +30,8 @@ public class Claim extends SubCommand {
 			return;
 		}
 		
-		if(Main.territory.containsKey(standing)) {
-			this.sendMessageWithPrefix("Error", "This territory is owned by &s" + this.sql().getClan(Main.territory.get(standing)).getName() + "&r.");
+		if(Main.getInstance().getClanFromTerritory(standing) != null) {
+			this.sendMessageWithPrefix("Error", "This territory is owned by &s" + Main.getInstance().getClanFromTerritory(standing).getName() + "&r.");
 			return;
 		}
 		
@@ -44,8 +44,8 @@ public class Claim extends SubCommand {
 		boolean isNextToSelf = clan.getTerritory().isEmpty() ? true : false;
 		Clan isNextToOther = null;
 		for(Chunk near : sides) {
-			if(Main.territory.containsKey(near)) {
-				Clan claimed = this.sql().getClan(Main.territory.get(near));
+			if(Main.getInstance().getClanFromTerritory(near) != null) {
+				Clan claimed = Main.getInstance().getClanFromTerritory(near);
 				if(claimed.compare(clan))
 					isNextToSelf = true;
 				else
@@ -54,8 +54,8 @@ public class Claim extends SubCommand {
 		}
 		
 		for(Chunk near : corners) {
-			if(Main.territory.containsKey(near)) {
-				Clan claimed = this.sql().getClan(Main.territory.get(near));
+			if(Main.getInstance().getClanFromTerritory(near) != null) {
+				Clan claimed = Main.getInstance().getClanFromTerritory(near);
 				if(!claimed.compare(clan))
 					isNextToOther = claimed;
 			}

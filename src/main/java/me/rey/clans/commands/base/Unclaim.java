@@ -56,13 +56,13 @@ public class Unclaim extends SubCommand {
 			return;
 		}
 		
-		if(!Main.territory.containsKey(standing)) {
+		if(Main.getInstance().getClanFromTerritory(standing) == null) {
 			this.sendMessageWithPrefix("Error", "This territory is not owned by anybody!");
 			return;
 		}
 		
-		if(Main.territory.containsKey(standing) && (self == null || !this.sql().getClan(Main.territory.get(standing)).compare(self))) {
-			Clan toUnclaim = this.sql().getClan(Main.territory.get(standing));
+		if(Main.getInstance().getClanFromTerritory(standing) != null && (self == null || !Main.getInstance().getClanFromTerritory(standing).compare(self))) {
+			Clan toUnclaim = Main.getInstance().getClanFromTerritory(standing);
 			
 			int maxChunks = toUnclaim.getPossibleTerritory() <= References.MAX_TERRITORY ? toUnclaim.getPossibleTerritory() : References.MAX_TERRITORY;
 			if(!(toUnclaim.getTerritory().size() > maxChunks) || toUnclaim.isServerClan()) {
