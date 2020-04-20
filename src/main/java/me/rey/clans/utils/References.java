@@ -21,7 +21,7 @@ public class References {
 	/*
 	 * SIEGE VARIABLES
 	 */
-	public static final int SIEGE_MINUTES = 1;
+	public static final int SIEGE_MINUTES = 30;
 
 	/*
 	 * MISC

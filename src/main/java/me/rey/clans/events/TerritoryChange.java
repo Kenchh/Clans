@@ -43,6 +43,7 @@ public class TerritoryChange implements Listener {
 			if(owner == null) {
 				cp.sendMessageWithPrefix("Territory", "Wilderness");
 				new Title("", Text.color("&7Wilderness"), 5, titleDelaySeconds * 20, 5).send(p);
+				return;
 			}
 			
 			ClanRelations relation = ClanRelations.NEUTRAL;

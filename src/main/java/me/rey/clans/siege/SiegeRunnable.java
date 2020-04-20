@@ -15,10 +15,12 @@ public class SiegeRunnable extends BukkitRunnable {
 
 	private double intervalInSeconds = 0.1;
 	private Clan sieging, sieged;
+	private Siege siege;
 	
-	public SiegeRunnable(Clan sieging, Clan sieged) {
+	public SiegeRunnable(Clan sieging, Clan sieged, Siege siege) {
 		this.sieging = sieging;
 		this.sieged = sieged;
+		this.siege = siege;
 	}
 	
 	public void start() {
@@ -28,6 +30,8 @@ public class SiegeRunnable extends BukkitRunnable {
 	@Override
 	public void run() {
 
+		String timeRemaining = this.siege.getRemainingString(System.currentTimeMillis());
+		
 		/*
 		 * NOT displaying action bar if the clan is being sieged by more than 1 other clan(s)
 		 */
@@ -39,7 +43,7 @@ public class SiegeRunnable extends BukkitRunnable {
 				
 				ClansPlayer cp = new ClansPlayer(uuid);
 				if(!cp.isOnline()) continue;
-				new ActionBar(Text.color("&cYou are being sieged")).send(cp.getPlayer());
+				new ActionBar(Text.color("&cSieged by &a" + sieging.getName() + String.format(" &c(&a%s&c)", timeRemaining))).send(cp.getPlayer());
 			}
 		}
 		// END
@@ -56,7 +60,7 @@ public class SiegeRunnable extends BukkitRunnable {
 				
 				ClansPlayer cp = new ClansPlayer(uuid);
 				if(!cp.isOnline()) continue;
-				new ActionBar(Text.color("&cYou are sieging &a" + sieged.getName())).send(cp.getPlayer());
+				new ActionBar(Text.color("&cSieging &a" + sieged.getName() + String.format(" &c(&a%s&c)", timeRemaining))).send(cp.getPlayer());
 			}
 		}
 		

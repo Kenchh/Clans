@@ -20,12 +20,25 @@ public class Siege {
 	
 	private Clan sieger, sieged;
 	private SiegeRunnable runnable;
+	private long time;
 	
-	public Siege(Clan sieger, Clan sieged) {
+	public Siege(Clan sieger, Clan sieged, long timeIssued) {
 		this.sieger = sieger;
 		this.sieged = sieged;
+		this.time = timeIssued;
 
-		runnable = new SiegeRunnable(sieger, sieged);
+		runnable = new SiegeRunnable(sieger, sieged, this);
+	}
+	
+	public String getRemainingString(long timeCurrent) {
+		boolean seconds = false; 
+		double remainingMinutes = (double) References.SIEGE_MINUTES - ((double) ((timeCurrent-time)/1000.0/60.0));
+		if(remainingMinutes <= 1) {
+			remainingMinutes = remainingMinutes * 60.0;
+			seconds = true;
+		}
+		
+		return String.format("%.1f", remainingMinutes <= 0 ? 0.0 : remainingMinutes ) + " " + (seconds ? "Seconds" : "Minutes");
 	}
 	
 	public void end() {
