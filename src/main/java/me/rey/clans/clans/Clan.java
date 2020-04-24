@@ -341,7 +341,7 @@ public class Clan {
 	public boolean removeTerritory(Chunk chunk) {
 		if(!this.territory.contains(chunk)) return false;
 		if(Main.getInstance().getClanFromTerritory(chunk) != null)
-			Main.getInstance().territory.remove(chunk);
+			Main.getInstance().removeTerritory(chunk);
 		
 		this.territory.remove(chunk);
 		return true;
@@ -358,7 +358,7 @@ public class Clan {
 		while(chunks.hasNext()) {
 			Chunk next = chunks.next();
 			if(Main.getInstance().getClanFromTerritory(next) != null)
-				Main.getInstance().territory.remove(next);
+				Main.getInstance().removeTerritory(next);
 		}
 		this.territory.clear();
 	}

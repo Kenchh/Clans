@@ -166,6 +166,10 @@ public class ClansPlayer {
 		return (int) this.sql.getPlayerData(this.getUniqueId(), "gold");
 	}
 	
+	public void setGold(int gold) {
+		this.sql.setPlayerData(this.getUniqueId(), "gold", gold);
+	}
+	
 	public Clan getClanInTerritory() {
 		return Main.getInstance().getClanFromTerritory(this.getPlayer().getLocation().getChunk());
 	}

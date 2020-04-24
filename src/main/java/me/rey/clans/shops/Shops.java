@@ -1,4 +1,4 @@
-package me.rey.clans.events;
+package me.rey.clans.shops;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -1,5 +1,6 @@
 package me.rey.clans.packets;
 
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -14,9 +15,9 @@ public class ActionBar extends Packets {
 	}
 	
 	@Override
-	public void send(Player player) {
+	public void send(LivingEntity entity) {
 		final IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + text + "\"}");
         final PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-        this.sendPacket(player, ppoc);
+        this.sendPacket((Player) entity, ppoc);
 	}
 }

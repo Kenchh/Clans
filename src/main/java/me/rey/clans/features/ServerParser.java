@@ -1,10 +1,12 @@
 package me.rey.clans.features;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -14,16 +16,26 @@ import org.bukkit.event.Listener;
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ServerClan;
+import me.rey.clans.shops.ShopNPC;
+import me.rey.clans.shops.guis.Test;
 import me.rey.parser.ParseEvent;
 import me.rey.parser.ParseType;
 import me.rey.parser.Parser;
 import me.rey.parser.ParserPlugin;
 
-public class ServerTerritoriesParse implements Listener {
+public class ServerParser implements Listener {
 
 	Parser safeZone = new Parser("Safe", Material.BEDROCK, ParseType.CUBOID, true);
+	Set<ShopNPC> shops = new HashSet<>(Arrays.asList(
+				new ShopNPC(1, "&a&lTest", new Test(), new Parser("ShopTest", Material.WOOL, ParseType.SINGLE, true))
+			));
 	
 	public void init() {
+		// Shop NPCs
+		for(ShopNPC shop : shops) {
+			ParserPlugin.getInstance().registerParser(shop.getParser());
+		}
+		
 		// safe zone
 		ParserPlugin.getInstance().registerParser(safeZone);
 		
@@ -32,6 +44,31 @@ public class ServerTerritoriesParse implements Listener {
 			if(type.getParser() == null) continue;
 			ParserPlugin.getInstance().registerParser(type.getParser());
 		}	
+	}
+	
+	@EventHandler
+	public void onShopNPC(ParseEvent e) {
+		if(e.getParser() == null) return;
+		
+		for(ShopNPC type : shops) {
+			if(type.getParser() == null || !type.getParser().getName().equals(e.getParser().getName())) continue;
+			// matches
+			
+			Iterator<Block> found = e.getParsedPoints().iterator();
+			while(found.hasNext()) {
+				Block b = found.next();
+				b.setType(Material.AIR);
+				if(e.getParser().useSponge())
+					b.getRelative(BlockFace.DOWN).setType(Material.AIR);
+				
+				Location toSpawn = b.getLocation().clone();
+				toSpawn.setX(toSpawn.getBlockX() + 0.5);
+				toSpawn.setY(toSpawn.getBlockY() - 1);
+				toSpawn.setZ(toSpawn.getBlockZ() + 0.5);
+				
+				type.spawn(toSpawn);
+			}
+		}
 	}
 	
 	

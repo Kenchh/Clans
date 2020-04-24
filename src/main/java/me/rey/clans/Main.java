@@ -24,11 +24,11 @@ import me.rey.clans.events.CombatBaseRelation;
 import me.rey.clans.events.PlayerChat;
 import me.rey.clans.events.PlayerDeath;
 import me.rey.clans.events.PlayerJoin;
-import me.rey.clans.events.Shops;
 import me.rey.clans.events.TerritoryChange;
 import me.rey.clans.features.EnergyHandler;
-import me.rey.clans.features.ServerTerritoriesParse;
+import me.rey.clans.features.ServerParser;
 import me.rey.clans.packets.PlayerInfo;
+import me.rey.clans.shops.Shops;
 import me.rey.clans.siege.SiegeTriggerEvent;
 import me.rey.clans.utils.Text;
 
@@ -44,7 +44,7 @@ public class Main extends JavaPlugin {
 	public static Set<String> safeZoneCoords;
 	public static ArrayList<UUID> clans;
 	public HashMap<Chunk, UUID> territory;
-	private ServerTerritoriesParse stp;
+	private ServerParser stp;
 	
 	/*
 	 * Called on plugin enable
@@ -57,7 +57,7 @@ public class Main extends JavaPlugin {
 		loadConfig();
 		initDatabase();
 		
-		stp = new ServerTerritoriesParse();
+		stp = new ServerParser();
 		stp.init();
 		this.pm.registerEvents(stp, this);
 		
@@ -182,6 +182,20 @@ public class Main extends JavaPlugin {
 		}
 		
 		return null;
+	} 
+	
+	@SuppressWarnings("unchecked")
+	public boolean removeTerritory(Chunk c) {
+		if(this.getClanFromTerritory(c) == null) return false;
+		
+		for(Chunk chunk : ((HashMap<Chunk, UUID>) territory.clone()).keySet()) {
+			if(c.getX() == chunk.getX() && c.getZ() == chunk.getZ()) {
+				this.territory.remove(chunk);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }

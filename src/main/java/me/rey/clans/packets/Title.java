@@ -1,6 +1,7 @@
 package me.rey.clans.packets;
 
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import me.rey.clans.utils.Text;
@@ -22,23 +23,23 @@ public class Title extends Packets {
 	}
 	
 	@Override
-	public void send(Player player) {
+	public void send(LivingEntity entity) {
 		
 		PacketPlayOutTitle time = new PacketPlayOutTitle(EnumTitleAction.TIMES, ChatSerializer.a("{\"text\":\"" + subtitle + "\"}"), fadeIn, stay, fadeOut);
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(time);
+		((CraftPlayer) entity).getHandle().playerConnection.sendPacket(time);
 		
 		if(title != "") {
 			PacketPlayOutTitle packet = new PacketPlayOutTitle(EnumTitleAction.TITLE, 
 					ChatSerializer.a("{\"text\":\"" + title + "\"}"));
 			
-			this.sendPacket(player, packet);
+			this.sendPacket((Player) entity, packet);
 		}
 		
 		if(subtitle != "") {
 			PacketPlayOutTitle packet = new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, 
 					ChatSerializer.a("{\"text\":\"" + subtitle + "\"}"));
 			
-			this.sendPacket(player, packet);
+			this.sendPacket((Player) entity, packet);
 		}
 	}
 

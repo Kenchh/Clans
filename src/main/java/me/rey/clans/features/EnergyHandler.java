@@ -41,6 +41,7 @@ public class EnergyHandler extends BukkitRunnable {
 			Clan toDecrease = this.sql.getClan(query);
 			if(toDecrease.isServerClan()) continue;
 			if(toDecrease.getEnergy() <= 0) continue;
+			if(toDecrease.getTerritory().size() == 0) continue;
 			
 			toDecrease.setEnergy(toDecrease.getEnergy() - this.decrement);
 			this.sql.saveClan(toDecrease);

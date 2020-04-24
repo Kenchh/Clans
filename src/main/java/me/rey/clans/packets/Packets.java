@@ -1,6 +1,7 @@
 package me.rey.clans.packets;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public abstract class Packets {
@@ -9,7 +10,7 @@ public abstract class Packets {
 	Class<?> CHATCOMPONENT = getNMSClass("IChatBaseComponent");
 	Class<?> TITLEPACKET = getNMSClass("PacketPlayOutTitle");
 	
-	public abstract void send(Player player);
+	public abstract void send(LivingEntity entity);
 	
 	public void sendPacket(Player player, Object packet) {
 		try {
