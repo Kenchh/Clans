@@ -426,15 +426,16 @@ public class Clan {
 		return allies >= References.MAX_ALLIES;
 	}
 	
-	public boolean hasMaxTruces() {
-		int allies = 0;
-		for(UUID uuid : this.getRelations().keySet()) {
-			if(getClanRelation(uuid).equals(ClanRelations.TRUCE))
-				allies++;
-		}
-		return allies >= References.MAX_TRUCES;
-	}
-	
+//  ------------------------------------------- REMOVED
+//	public boolean hasMaxTruces() {
+//		int allies = 0;
+//		for(UUID uuid : this.getRelations().keySet()) {
+//			if(getClanRelation(uuid).equals(ClanRelations.TRUCE))
+//				allies++;
+//		}
+//		return allies >= References.MAX_TRUCES;
+//	}
+//	
 	public void setRelationsMap(HashMap<UUID, ClanRelations> relations) {
 		this.clanRelations = relations;
 	}

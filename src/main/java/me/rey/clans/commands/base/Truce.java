@@ -1,26 +1,7 @@
 package me.rey.clans.commands.base;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import me.rey.clans.Main;
-import me.rey.clans.clans.Clan;
-import me.rey.clans.clans.ClanRelations;
-import me.rey.clans.clans.ClansPlayer;
-import me.rey.clans.clans.ClansRank;
-import me.rey.clans.commands.ClansCommand;
-import me.rey.clans.commands.SubCommand;
-import me.rey.clans.enums.CommandType;
-import me.rey.clans.utils.ErrorCheck;
-
-public class Truce extends SubCommand {
-
+public class Truce {
+/*
 	private static HashMap<UUID, ArrayList<UUID>> requests = new HashMap<>();
 	private final int inviteExpiresSeconds = 60;
 	
@@ -113,6 +94,6 @@ public class Truce extends SubCommand {
 	public SubCommand[] getChilds() {
 		return new SubCommand[] {};
 	}
-	
+	*/
 
 }

@@ -72,7 +72,7 @@ public class Base extends ClansCommand {
 				new Promote(),
 				new Demote(),
 				new Ally(),
-				new Truce(),
+//				new Truce(), // Removed
 				new Neutral(),
 				new Invite(),
 				new Home(),

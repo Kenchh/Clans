@@ -8,7 +8,7 @@ public enum ClanRelations {
 	
 	NEUTRAL(0, ChatColor.GOLD, ChatColor.YELLOW, false),
 	ALLY(1, ChatColor.DARK_GREEN, ChatColor.GREEN),
-	TRUCE(2, ChatColor.DARK_GRAY, ChatColor.GRAY),
+//	TRUCE(2, ChatColor.DARK_GRAY, ChatColor.GRAY), // Removed
 	ENEMY(3, ChatColor.DARK_RED, ChatColor.RED, false),
 	SELF(4, ChatColor.DARK_AQUA, ChatColor.AQUA, false);
 	
