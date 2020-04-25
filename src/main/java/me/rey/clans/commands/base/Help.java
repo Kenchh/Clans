@@ -4,6 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import me.rey.clans.clans.ClansRank;
+import me.rey.clans.commands.AllyChat;
+import me.rey.clans.commands.ClanChat;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
@@ -28,6 +30,16 @@ public class Help extends SubCommand {
 					subCommand.description()
 					)));
 		}
+		
+		sender.sendMessage(Text.color(String.format("%s &7%s",
+					new AllyChat().usage(),
+					new AllyChat().description()
+					)));
+		
+		sender.sendMessage(Text.color(String.format("%s &7%s",
+					new ClanChat().usage(),
+					new ClanChat().description()
+					)));
 		
 	}
 

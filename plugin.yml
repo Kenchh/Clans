@@ -7,3 +7,9 @@ commands:
     c:
         usage: /<command>
         aliases: [clan, clans, faction, factions]
+    ac:
+        usage: /<command>
+        aliases: [allychat]
+    cc:
+        usage: /<command>
+        aliases: [clanchat]

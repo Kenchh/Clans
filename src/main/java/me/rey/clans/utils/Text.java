@@ -51,17 +51,15 @@ public class Text {
 		
 		boolean hasClan = cp.getRealClan() != null;
 		
-		UserRank rank = new User(player).getRank();
-		String rankPrefix = rank == UserRank.MEMBER ? "" : rank.getColor() + "[" + rank.getName().toUpperCase() + "] " + ChatColor.RESET;
 		ClansPlayer toSend = new ClansPlayer(receiver);
 		
 		if(!hasClan)
-			return rankPrefix + ClanRelations.NEUTRAL.getPlayerColor() + player.getName();
+			return ClanRelations.NEUTRAL.getPlayerColor() + player.getName();
 		
 		ClanRelations relation = toSend.getRealClan() == null ? ClanRelations.NEUTRAL : toSend.getRealClan().getClanRelation(cp.getRealClan().getUniqueId());
 		Clan from = cp.getRealClan();
 		
-		return rankPrefix + relation.getClanColor() + from.getName() + " " + relation.getPlayerColor() + player.getName();
+		return relation.getClanColor() + from.getName() + " " + relation.getPlayerColor() + player.getName();
     }
     
     public static boolean announceToServer(String prefix, String message) {
@@ -101,5 +99,12 @@ public class Text {
         }
         return true;
     }
+
+	public static String getPrefix(Player player) {
+		UserRank rank = new User(player).getRank();
+		String rankPrefix = rank == UserRank.MEMBER ? "" : rank.getColor() + "[" + rank.getName().toUpperCase() + "] " + ChatColor.RESET;
+		
+		return rankPrefix;
+	}
 
 }

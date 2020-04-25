@@ -6,12 +6,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import me.rey.clans.Main;
 import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.References;
+import me.rey.core.utils.Text;
 
 public class Clan {
 	
@@ -82,6 +85,38 @@ public class Clan {
 			if(type.getName().equalsIgnoreCase(this.getName())) return true;
 		}
 		return false;
+	}
+	
+	public void shoutToRelation(ClanRelations relation, Player shouter, String message) {
+		ClanRelations r = relation;
+		ChatColor playerColor, messageColor;
+		String prefix = me.rey.clans.utils.Text.getPrefix(shouter);
+		
+		switch(r) {
+		case SELF:
+			playerColor = r.getPlayerColor(); messageColor = r.getClanColor();
+			break;
+		default:
+			playerColor = r.getClanColor(); messageColor = r.getPlayerColor();
+			break;
+		}
+		
+		String text = Text.color(prefix + playerColor + (r.getId() == ClanRelations.SELF.getId() ? "" : this.getName() + " ") + shouter.getName() + " " + messageColor + message);
+		
+		for(UUID uuid : this.getRelations().keySet()) {
+			if(this.getClanRelation(uuid).getId() != r.getId()) continue;
+			
+			Clan related = Main.getInstance().getSQLManager().getClan(uuid);
+			
+			for(ClansPlayer toShout : related.getOnlinePlayers().keySet()) {
+				toShout.getPlayer().sendMessage(text);
+			}
+		}
+		
+		for(ClansPlayer inside : this.getOnlinePlayers().keySet()) {
+			inside.getPlayer().sendMessage(text);
+		}
+		
 	}
 	
 	public Location getHome() {

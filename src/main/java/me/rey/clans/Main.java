@@ -16,6 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.rey.clans.clans.Clan;
+import me.rey.clans.commands.AllyChat;
+import me.rey.clans.commands.ClanChat;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.base.Base;
 import me.rey.clans.database.SQLManager;
@@ -27,6 +29,20 @@ import me.rey.clans.events.PlayerJoin;
 import me.rey.clans.events.TerritoryChange;
 import me.rey.clans.features.EnergyHandler;
 import me.rey.clans.features.ServerParser;
+import me.rey.clans.items.crafting.BoosterAxe;
+import me.rey.clans.items.crafting.BoosterSword;
+import me.rey.clans.items.crafting.IronDoor1;
+import me.rey.clans.items.crafting.IronTrapDoor1;
+import me.rey.clans.items.crafting.PowerAxe;
+import me.rey.clans.items.crafting.PowerSword;
+import me.rey.clans.items.crafting.marksman.MBoots1;
+import me.rey.clans.items.crafting.marksman.MBoots2;
+import me.rey.clans.items.crafting.marksman.MChestplate1;
+import me.rey.clans.items.crafting.marksman.MChestplate2;
+import me.rey.clans.items.crafting.marksman.MHelmet1;
+import me.rey.clans.items.crafting.marksman.MHelmet2;
+import me.rey.clans.items.crafting.marksman.MLeggings1;
+import me.rey.clans.items.crafting.marksman.MLeggings2;
 import me.rey.clans.packets.PlayerInfo;
 import me.rey.clans.shops.Shops;
 import me.rey.clans.siege.SiegeTriggerEvent;
@@ -79,6 +95,27 @@ public class Main extends JavaPlugin {
 		 * SERVER CLANS
 		 */
 		this.getSQLManager().loadServerClans();
+		
+		/*
+		 * RECIPES
+		 */
+		new MHelmet1().init().register();
+		new MHelmet2().init().register();
+		new MChestplate1().init().register();
+		new MChestplate2().init().register();
+		new MLeggings1().init().register();
+		new MLeggings2().init().register();
+		new MBoots1().init().register();
+		new MBoots2().init().register();
+		
+		new PowerSword().init().register();
+		new PowerAxe().init().register();
+		new BoosterSword().init().register();
+		new BoosterAxe().init().register();
+		
+		new IronDoor1().init().register();
+		new IronTrapDoor1().init().register();
+		
 		
 		/*
 		 * SCOREBOARD
@@ -134,7 +171,9 @@ public class Main extends JavaPlugin {
 	 */
 	public void registerCommands() {
 		this.commands = new ArrayList<ClansCommand>(Arrays.asList(
-				new Base()
+				new Base(),
+				new ClanChat(),
+				new AllyChat()
 				));
 	}
 	
