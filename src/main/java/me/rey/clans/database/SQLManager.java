@@ -44,6 +44,10 @@ public class SQLManager {
 		makeTable();
 	}
 	
+	public void onDisable() {
+		pool.closePool();
+	}
+	
 	private void makeTable() {
 		Connection conn = null;
 		PreparedStatement ps = null, ps2 = null, ps3 = null;

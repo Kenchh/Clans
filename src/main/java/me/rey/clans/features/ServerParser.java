@@ -17,7 +17,7 @@ import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ServerClan;
 import me.rey.clans.shops.ShopNPC;
-import me.rey.clans.shops.guis.Test;
+import me.rey.clans.shops.guis.PvP;
 import me.rey.parser.ParseEvent;
 import me.rey.parser.ParseType;
 import me.rey.parser.Parser;
@@ -27,7 +27,8 @@ public class ServerParser implements Listener {
 
 	Parser safeZone = new Parser("Safe", Material.BEDROCK, ParseType.CUBOID, true);
 	Set<ShopNPC> shops = new HashSet<>(Arrays.asList(
-				new ShopNPC(1, "&a&lTest", new Test(), new Parser("ShopTest", Material.WOOL, ParseType.SINGLE, true))
+				new ShopNPC(1, "&a&lPvP Shop", new PvP(), new Parser("ShopPvP", Material.CLAY, ParseType.SINGLE, true))
+//				new ShopNPC(1, "&a&lTest", new Test(), new Parser("ShopTest", Material.WOOL, ParseType.SINGLE, true))
 			));
 	
 	public void init() {

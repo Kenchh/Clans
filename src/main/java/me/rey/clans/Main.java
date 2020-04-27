@@ -141,6 +141,8 @@ public class Main extends JavaPlugin {
 	public void onDisable() {
 		
 		this.plugin = null;
+		
+		sql.onDisable();
 	}
 	
 	

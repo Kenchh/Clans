@@ -21,13 +21,10 @@ public abstract class CraftingRecipe extends ShapedRecipe implements Listener {
 
     public static Map<ItemStack, List<CraftingRecipe>> recipes = new HashMap<ItemStack, List<CraftingRecipe>>();
     private Map<Character, ItemStack> exactIntegrients = new HashMap<Character, ItemStack>();
-    
-    public boolean ignore;
+   
   
     public CraftingRecipe(ItemStack result) {
         super(result);
-        
-        this.ignore = true;
         Bukkit.getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
     
@@ -99,25 +96,21 @@ public abstract class CraftingRecipe extends ShapedRecipe implements Listener {
         return CraftingRecipe.recipes.get(item);
     }
     
-    public void setIgnoreOldRecipes(boolean ignore) {
-    	this.ignore = ignore;
-    }
-  
     @EventHandler
     public void process(PrepareItemCraftEvent event) {
         CraftingInventory inv = event.getInventory();
         ItemStack result = inv.getResult();
         
-        if(ignore) {
+        if(!(this instanceof IExtraCraft)) {
 	        for(ItemStack found : recipes.keySet()) {
-	        	if(found != null && result != null && found.getType().equals(result.getType()))
-	        		inv.setResult(null);
+	        	if(!(this instanceof IExtraCraft) && found != null && result != null && found.getType().equals(result.getType())) {
+	        		inv.setResult(null);  
+	        	}
 	        }
         }
         
         List<CraftingRecipe> recipes = CraftingRecipe.getRecipes(result);
         if (recipes != null) {
-            inv.setResult(ignore ? null : result);
             for (CraftingRecipe recipe : recipes) {
                 if (recipe.equals(inv.getMatrix())) {
                     inv.setResult(recipe.getResult());
@@ -125,5 +118,9 @@ public abstract class CraftingRecipe extends ShapedRecipe implements Listener {
                 }
             }
         }
+    }
+    
+    public interface IExtraCraft {
+    	
     }
 }
