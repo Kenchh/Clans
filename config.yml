@@ -1,0 +1,39 @@
+# Clans | Made by @rey#7437 @ ReinforcedMC
+
+########################
+# Database Connections ###################
+########################
+
+# RFCore dependency rank for staff user permissions to use /c x
+staff-permission-rank: Mod
+
+# Resourcepack URL for Clans
+resource-pack-url: http://pack.reinforcedmc.com/
+
+# Server Website
+website: www.reinforcedmc.com
+
+# Clans-Only World
+clans-world: world
+
+# Energy Status | Is Paused?
+energy-pause: false
+
+########################
+# Database Connections ###################
+########################
+
+mysql:
+    host: localhost
+    port: 3306
+    username: root
+    database: warriors
+    password: test
+    clans_data_table: clans_data
+    clans_player_data_table: clans_player_data
+    clans_settings_table: clans_settings
+    minConnections: 5
+    maxConnections: 20
+    connectionTimeout: 0
+    testQuery: "SELECT 1"
+    
