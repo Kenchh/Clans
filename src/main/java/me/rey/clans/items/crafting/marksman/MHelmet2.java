@@ -9,7 +9,7 @@ import me.rey.core.classes.ClassType;
 public class MHelmet2 extends CraftingRecipe {
 
 	public MHelmet2() {
-		super(new ItemStack(ClassType.CHAIN.getHelmet()));
+		super(new ItemStack(ClassType.CHAIN.getHelmet().get()));
 	}
 
 	@Override

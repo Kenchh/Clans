@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import me.rey.clans.Main;
 import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.References;
-import me.rey.core.utils.Text;
+import me.rey.core.utils.Text;;
 
 public class Clan {
 	

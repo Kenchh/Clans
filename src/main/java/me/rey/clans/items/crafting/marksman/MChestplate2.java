@@ -9,7 +9,7 @@ import me.rey.core.classes.ClassType;
 public class MChestplate2 extends CraftingRecipe {
 
 	public MChestplate2() {
-		super(new ItemStack(ClassType.CHAIN.getChestplate()));
+		super(new ItemStack(ClassType.CHAIN.getChestplate().get()));
 	}
 
 	@Override

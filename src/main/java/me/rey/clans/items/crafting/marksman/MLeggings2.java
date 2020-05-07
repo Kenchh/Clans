@@ -9,7 +9,7 @@ import me.rey.core.classes.ClassType;
 public class MLeggings2 extends CraftingRecipe {
 
 	public MLeggings2() {
-		super(new ItemStack(ClassType.CHAIN.getLeggings()));
+		super(new ItemStack(ClassType.CHAIN.getLeggings().get()));
 	}
 
 	@Override

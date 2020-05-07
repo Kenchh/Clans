@@ -1,9 +1,5 @@
 package me.rey.clans.shops;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,16 +9,15 @@ import org.bukkit.event.Listener;
 
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.packets.Title;
-import me.rey.core.classes.abilities.AbilityType;
 import me.rey.core.events.customevents.AbilityUseEvent;
 import me.rey.core.events.customevents.CombatTimerEndEvent;
 import me.rey.core.events.customevents.CombatTimerTickEvent;
-import me.rey.core.events.customevents.DamageEvent;
+import me.rey.core.events.customevents.damage.DamageEvent;
 import me.rey.core.utils.Text;
 
 public class Shops implements Listener {
 	
-	Set<AbilityType> disallowedAbilities = new HashSet<>(Arrays.asList(AbilityType.SWORD, AbilityType.BOW, AbilityType.AXE));
+//	Set<AbilityType> disallowedAbilities = new HashSet<>(Arrays.asList(AbilityType.SWORD, AbilityType.BOW, AbilityType.AXE));
 	
 	@EventHandler
 	public void onCombatEnd(CombatTimerEndEvent e) {
@@ -53,7 +48,7 @@ public class Shops implements Listener {
 
 	@EventHandler (priority = EventPriority.LOWEST)
 	public void onAbilityUse(AbilityUseEvent e) {
-		if(!disallowedAbilities.contains(e.getAbility().getAbilityType())) return;
+//		if(!disallowedAbilities.contains(e.getAbility().getAbilityType())) return;
 		
 		ClansPlayer cp = new ClansPlayer(e.getPlayer());
 		if(cp.isInSafeZone()) {

@@ -6,7 +6,7 @@ import me.rey.clans.Main;
 import me.rey.clans.gui.Gui;
 import me.rey.clans.items.CustomItems;
 import me.rey.clans.shops.ShopItem;
-import me.rey.core.classes.ClassType;
+//import me.rey.core.classes.ClassType;
 import me.rey.core.pvp.ToolType;
 
 public class PvP extends Gui {
@@ -19,18 +19,18 @@ public class PvP extends Gui {
 	public void init() {
 		int row = 9;
 		
-		int index = 0;
-		for(ClassType type : ClassType.values()) {
-			
-			Material[] armor = type.getArmor();
-			
-			this.setItem(new ShopItem(new Item(armor[0]).setName(type.getName() + " Helmet").get(), 2500, 500, true), index); // HELMET
-			this.setItem(new ShopItem(new Item(armor[1]).setName(type.getName() + " Chestplate").get(), 4000, 800, true), index + row*1); // CHESTPLATE
-			this.setItem(new ShopItem(new Item(armor[2]).setName(type.getName() + " Leggings").get(), 3500, 700, true), index + row*2); // LEGGINGS
-			this.setItem(new ShopItem(new Item(armor[3]).setName(type.getName() + " Boots").get(), 2000, 400, true), index + row*3); // BOOTS
-			
-			index++;
-		}
+//		int index = 0;
+////		for(ClassType type : ClassType.values()) {
+////			
+////			Material[] armor = type.getArmor();
+////			
+////			this.setItem(new ShopItem(new Item(armor[0]).setName(type.getName() + " Helmet").get(), 2500, 500, true), index); // HELMET
+////			this.setItem(new ShopItem(new Item(armor[1]).setName(type.getName() + " Chestplate").get(), 4000, 800, true), index + row*1); // CHESTPLATE
+////			this.setItem(new ShopItem(new Item(armor[2]).setName(type.getName() + " Leggings").get(), 3500, 700, true), index + row*2); // LEGGINGS
+////			this.setItem(new ShopItem(new Item(armor[3]).setName(type.getName() + " Boots").get(), 2000, 400, true), index + row*3); // BOOTS
+////			
+////			index++;
+////		}
 		
 		/*
 		 * SWORDS

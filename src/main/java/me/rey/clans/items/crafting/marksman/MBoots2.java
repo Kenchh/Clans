@@ -9,7 +9,7 @@ import me.rey.core.classes.ClassType;
 public class MBoots2 extends CraftingRecipe {
 
 	public MBoots2() {
-		super(new ItemStack(ClassType.CHAIN.getBoots()));
+		super(new ItemStack(ClassType.CHAIN.getBoots().get()));
 	}
 
 	@Override

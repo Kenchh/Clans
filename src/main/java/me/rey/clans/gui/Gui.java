@@ -196,6 +196,11 @@ public abstract class Gui implements Listener {
             return this;
         }
         
+        public Item setData(int data) {
+        	this.data = data;
+        	return this;
+        }
+        
         public Item setDefaultLore(String... lore) {
         	this.addLore("&8&m-------------------");
         	this.addLore("&r");
