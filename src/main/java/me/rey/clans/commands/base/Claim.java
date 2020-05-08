@@ -1,7 +1,10 @@
 package me.rey.clans.commands.base;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -13,7 +16,12 @@ import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Claim extends SubCommand {
+
+	public static HashMap<Block, Material> borderBlocksDrawnOver = new HashMap<Block, Material>();
 
 	public Claim() {
 		super("claim", "Claim a piece of land", "/c claim", ClansRank.ADMIN, CommandType.CLAN, true);
@@ -30,11 +38,16 @@ public class Claim extends SubCommand {
 			return;
 		}
 		
-		if(Main.getInstance().getClanFromTerritory(standing) != null) {
+		if(Main.getInstance().getClanFromTerritory(standing) != null && Main.getInstance().getClanFromTerritory(standing).getUniqueId() != clan.getUniqueId()) {
 			this.sendMessageWithPrefix("Error", "This territory is owned by &s" + Main.getInstance().getClanFromTerritory(standing).getName() + "&r.");
 			return;
 		}
-		
+
+		if(Main.getInstance().getClanFromTerritory(standing) != null && Main.getInstance().getClanFromTerritory(standing).getUniqueId() == clan.getUniqueId()) {
+			this.sendMessageWithPrefix("Error", "You have already claimed this territory!");
+			return;
+		}
+
 		int x = standing.getX(), z = standing.getZ();
 		World w = standing.getWorld();
 		Chunk[] sides = new Chunk[4], corners = new Chunk[4];
@@ -67,13 +80,76 @@ public class Claim extends SubCommand {
 				this.sendMessageWithPrefix("Error", "You cannot claim next to &s" + isNextToOther.getName() + "&r!");
 				return;
 			}
-			
+			drawBorders(standing, player);
 			clan.addTerritory(standing);
 			this.sendMessageWithPrefix("Clan", "Successfully claimed chunk (&s" + standing.getX() + "&r, &e" + standing.getZ() + "&r).");
 			this.sql().saveClan(clan);
 		} else {
 			this.sendMessageWithPrefix("Error", "You must claim next to your owned territory!");
 		}
+	}
+
+	public void drawBorders(Chunk standing, Player p) {
+		for(int a=0; a<=15; a++) {
+
+			Block blockC = standing.getBlock(a, 0, 0);
+			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
+			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
+
+			Material m = block.getType();
+			borderBlocksDrawnOver.put(block, m);
+			block.setType(Material.SEA_LANTERN);
+		}
+
+		for(int b=0; b<=14; b++) {
+
+			Block blockC = standing.getBlock(0, 0, b + 1);
+			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
+			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
+
+			Material m = block.getType();
+			borderBlocksDrawnOver.put(block, m);
+			block.setType(Material.SEA_LANTERN);
+		}
+
+		for(int c=0; c<=14; c++) {
+
+			Block blockC = standing.getBlock(15, 0, c + 1);
+			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
+			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
+			Material m = block.getType();
+			borderBlocksDrawnOver.put(block, m);
+			block.setType(Material.SEA_LANTERN);
+		}
+
+		for(int d=0; d<=13; d++) {
+
+			Block blockC = standing.getBlock(d + 1, 0, 15);
+			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
+			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
+
+			Material m = block.getType();
+			borderBlocksDrawnOver.put(block, m);
+			block.setType(Material.SEA_LANTERN);
+		}
+	}
+
+	public static void resetDrawnBorders(Chunk chunkWithDrawnBorders, Player p) {
+
+		ArrayList<Block> drawnBlocksToRemove = new ArrayList<Block>();
+
+		for(Block block : borderBlocksDrawnOver.keySet()) {
+			if(block.getChunk() == chunkWithDrawnBorders) {
+				Block drawnblock = chunkWithDrawnBorders.getBlock(block.getX(), block.getY(), block.getZ());
+				drawnblock.setType(borderBlocksDrawnOver.get(block));
+				drawnBlocksToRemove.add(block);
+			}
+		}
+
+		for(Block b : drawnBlocksToRemove) {
+			borderBlocksDrawnOver.remove(b);
+		}
+
 	}
 
 	@Override
