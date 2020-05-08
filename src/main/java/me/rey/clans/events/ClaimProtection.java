@@ -46,22 +46,30 @@ public class ClaimProtection implements Listener {
 	 * EnchantItemEvent - PrepareItemEnchantEvent - PlayerFishEvent
 	 */
 	
-	List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER);
+	List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER, Material.ANVIL);
+
+	List<Material> interactables = Arrays.asList(
+			/* Fence Gates */ 	Material.FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.BIRCH_FENCE_GATE, Material.DARK_OAK_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.SPRUCE_FENCE_GATE,
+			/* Doors */ 		Material.WOODEN_DOOR, Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR, Material.JUNGLE_DOOR, Material.SPRUCE_DOOR,
+			/* Etc. */			Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.TRAP_DOOR, Material.LEVER,
+			/* Redstone */		Material.REDSTONE_COMPARATOR, Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF, Material.DIODE, Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
+			/* Press. Plates */	Material.WOOD_PLATE, Material.STONE_PLATE, Material.IRON_PLATE, Material.GOLD_PLATE);
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 
-		if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(References.HOME_BLOCK)) e.setCancelled(true);
 		Block clicked = e.getClickedBlock();
 
 		if (this.isInOtherClaim(e.getPlayer(), clicked) != null) {
 
-			if(containers.contains(clicked.getType())) {
+			if(containers.contains(clicked.getType()) || interactables.contains(clicked.getType())) {
 				ContainerOpenEvent event = new ContainerOpenEvent(e.getPlayer(), clicked, false);
 				Bukkit.getServer().getPluginManager().callEvent(event);
 				if(event.isAllowed())
 					return;
+			} else {
+				return;
 			}
 
 			ErrorCheck.noPermissionInClaim(e.getPlayer(), this.isInOtherClaim(e.getPlayer(), clicked));
