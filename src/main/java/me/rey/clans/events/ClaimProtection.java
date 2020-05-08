@@ -58,6 +58,8 @@ public class ClaimProtection implements Listener {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 
+		if(e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
 		if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(References.HOME_BLOCK)) e.setCancelled(true);
 		Block clicked = e.getClickedBlock();
 
