@@ -1,5 +1,6 @@
 package me.rey.clans.commands.staff;
 
+import me.rey.clans.Main;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -30,7 +31,7 @@ public class ForceJoin extends SubCommand {
 			return;
 		}
 
-		Clan toJoin = this.sql().getClan(args[0]);
+		Clan toJoin = Main.getInstance().getClan(args[0]);
 		if(toJoin == null) {
 			ErrorCheck.clanNotExist(sender);
 			return;

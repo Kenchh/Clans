@@ -37,7 +37,7 @@ public class Set extends SubCommand {
 			return;
 		}
 		
-		Clan toJoin = this.sql().getClan(args[0]);
+		Clan toJoin = Main.getInstance().getClan(args[0]);
 		if(toJoin == null) {
 			ErrorCheck.clanNotExist(sender);
 			return;

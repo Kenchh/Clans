@@ -58,10 +58,11 @@ public class Main extends JavaPlugin {
 	private static Main instance;
 	public static HashMap<UUID, UUID> adminFakeClans;
 	public static Set<String> safeZoneCoords;
-	public static ArrayList<UUID> clans;
+	public static ArrayList<Clan> clans;
 	public HashMap<Chunk, UUID> territory;
 	private ServerParser stp;
-	
+	public static HashMap<UUID, HashMap<String, Object>> playerdata;
+
 	/*
 	 * Called on plugin enable
 	 */
@@ -81,7 +82,9 @@ public class Main extends JavaPlugin {
 		safeZoneCoords = this.getSQLManager().getSafeZones();
 		territory = new HashMap<Chunk, UUID>();
 		territory.putAll(this.getSQLManager().loadTerritories());
-		
+
+		playerdata = this.getSQLManager().getAllPlayerData();
+
 		this.registerCommands();
 		this.registerListeners();
 		
@@ -217,7 +220,7 @@ public class Main extends JavaPlugin {
 					return null;
 				}
 				
-				Clan toGive = this.getSQLManager().getClan(uuid);
+				Clan toGive = this.getClan(uuid);
 				return toGive;
 			}
 		}
@@ -237,6 +240,24 @@ public class Main extends JavaPlugin {
 		}
 		
 		return false;
+	}
+
+	public Clan getClan(UUID uuid) {
+		for(Clan c : clans) {
+			if(c.getUniqueId().equals(uuid)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	public Clan getClan(String name) {
+		for(Clan c : clans) {
+			if(c.getName().equals(name)) {
+				return c;
+			}
+		}
+		return null;
 	}
 
 }

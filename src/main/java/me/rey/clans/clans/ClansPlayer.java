@@ -1,6 +1,7 @@
 package me.rey.clans.clans;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -46,7 +47,7 @@ public class ClansPlayer {
 		
 		this.sql = plugin.getSQLManager();
 	}
-	
+
 	public UUID getUniqueId() {
 		return uuid;
 	}
@@ -147,14 +148,14 @@ public class ClansPlayer {
 	}
 	
 	public Clan getRealClan() {
-		String uuid = (String) this.sql.getPlayerData(this.getUniqueId(), "clan");
+		String uuid = (String) Main.playerdata.get(this.getUniqueId()).get("clan");
 		if(uuid == null) return null;
-		Clan toGive = this.sql.getClan(UUID.fromString(uuid)); 
+		Clan toGive = Main.getInstance().getClan(UUID.fromString(uuid));
 		return toGive;
 	}
 	
 	public Clan getFakeClan() {
-		return !isInFakeClan() ? null : this.sql.getClan(Main.adminFakeClans.get(this.getUniqueId()));
+		return !isInFakeClan() ? null : Main.getInstance().getClan(Main.adminFakeClans.get(this.getUniqueId()));
 	}
 	
 	public boolean isInFakeClan() {
@@ -163,7 +164,7 @@ public class ClansPlayer {
 	
 	public int getGold() {
 		this.sql.createPlayer(this.getUniqueId());
-		return (int) this.sql.getPlayerData(this.getUniqueId(), "gold");
+		return (int) Main.playerdata.get(this.getUniqueId()).get("gold");
 	}
 	
 	public void setGold(int gold) {

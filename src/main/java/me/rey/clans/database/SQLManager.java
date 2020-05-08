@@ -1,9 +1,6 @@
 package me.rey.clans.database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -268,31 +265,31 @@ public class SQLManager {
 	}
 	
 	public boolean createPlayer(UUID player) {
+		if(playerExists(player)) return false;
+
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
 		ResultSet res = null;
-		
+
 		try {
 			conn = pool.getConnection();
-			
+
 			String stmt = "SELECT * FROM " + clansPlayerDataTable + " WHERE uuid=?";
 			ps = conn.prepareStatement(stmt);
-			
+
 			ps.setString(1, player.toString());
 			res = ps.executeQuery();
-			
+
 			res.next();
-			if(!playerExists(player)) {
-				String stmt2 = "INSERT INTO " + clansPlayerDataTable
-						+ "(uuid,gold,clan) VALUE(?,?,?)";
-				insert = conn.prepareStatement(stmt2);
-				insert.setString(1, player.toString());
-				insert.setInt(2, 16000);
-				insert.setString(3, null);
-				insert.executeUpdate();
-				return true;
-			}
-			return false;
+
+			String stmt2 = "INSERT INTO " + clansPlayerDataTable
+					+ "(uuid,gold,clan) VALUE(?,?,?)";
+			insert = conn.prepareStatement(stmt2);
+			insert.setString(1, player.toString());
+			insert.setInt(2, 16000);
+			insert.setString(3, null);
+			insert.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -356,13 +353,12 @@ public class SQLManager {
 		
 		boolean existsInEnergy = false;
 		Clan self = getClan(uuid);
-		for(UUID listed : Main.clans) {
-			Clan clan = getClan(listed);
+		for(Clan clan : Main.clans) {
 			if(clan.compare(self)) existsInEnergy = true;
 		}
 		
 		if(!existsInEnergy)
-			Main.clans.add(getClan(name).getUniqueId());
+			Main.clans.add(getClan(uuid));
 		
 		
 		return true;
@@ -371,7 +367,7 @@ public class SQLManager {
 	public boolean createClan(UUID uuid, String name, Player founder) {
 		return this.createClan(uuid, name, founder.getName(), founder);
 	}
-	
+
 	public boolean saveClan(Clan clan) {
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
@@ -473,7 +469,7 @@ public class SQLManager {
 		}
 		return false;
 	}
-	
+
 	public Clan getClan(UUID uuid) {
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
@@ -488,7 +484,7 @@ public class SQLManager {
 			
 			ps.setString(1, uuid.toString());
 			res = ps.executeQuery();
-			
+
 			while(res.next()) {
 				String name, founder;
 				long energy = 0;
@@ -712,83 +708,83 @@ public class SQLManager {
 	public void deleteClan(UUID uuid) {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		
+
 		try {
-			Clan clan = getClan(uuid);
+			Clan clan = Main.getInstance().getClan(uuid);
 			if(clan == null) return;
-			
+
 
 			Clan toRemove = null;
-			for(UUID listed : Main.clans) {
-				if(uuid.equals(listed)) toRemove = clan;
+			for(Clan clanL : Main.clans) {
+				if(uuid.equals(clanL.getUniqueId())) toRemove = clan;
 			}
-			
+
 			if(toRemove != null)
 				Main.clans.remove(toRemove.getUniqueId());
 
-			
+
 			for(Chunk chunk : clan.getTerritory()) {
 				Main.getInstance().territory.remove(chunk);
 			}
-			
+
 			ArrayList<UUID> playersToRemove = new ArrayList<UUID>();
 			for(UUID player : Main.adminFakeClans.keySet()) {
 				if(Main.adminFakeClans.get(player).equals(clan.getUniqueId()))
 					playersToRemove.add(player);
 			}
-			
+
 			for(UUID player : playersToRemove) {
 				Main.adminFakeClans.remove(player);
 			}
-			
+
 			if(clan.getHome() != null)
 				clan.getHome().getBlock().setType(Material.AIR);
-			
+
 			conn = pool.getConnection();
 			String stmt = "DELETE FROM " + clansDataTable + " WHERE uuid=?";
 			ps = conn.prepareStatement(stmt);
-			
+
 			ps.setString(1, uuid.toString());
 			ps.executeUpdate();
-			
+
 			for(UUID cp : clan.getPlayers().keySet()) {
 				this.setPlayerData(cp, "clan", null);
 			}
-			
+
 			for(UUID uR : clan.getRelations().keySet()) {
-				Clan related = getClan(uR);
+				Clan related = Main.getInstance().getClan(uR);
 				related.removeRelation(clan.getUniqueId());
 				saveClan(related);
 			}
-			
+
 			for(UUID uR : clan.getWarpoints().keySet()) {
-				Clan enemy = getClan(uR);
+				Clan enemy = Main.getInstance().getClan(uR);
 				enemy.setWarpoint(clan.getUniqueId(), 0);
 				saveClan(enemy);
 			}
-						
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			pool.close(conn, ps, null);
 		}
-		
+
 	}
 	
 	public void setClanData(UUID uuid, String column, Object data) {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		
+
 		try {
 			conn = pool.getConnection();
-			
+
 			String stmt = "UPDATE " + clansDataTable + " SET " + column + "=?  WHERE uuid=?";
 			ps = conn.prepareStatement(stmt);
-			
+
 			ps.setObject(1, data);
 			ps.setString(2, uuid.toString());
 			ps.executeUpdate();
-						
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -800,16 +796,16 @@ public class SQLManager {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		
+
 		try {
 			conn = pool.getConnection();
-			
+
 			String stmt = "SELECT * FROM " + clansDataTable + " WHERE uuid=?";
 			ps = conn.prepareStatement(stmt);
-			
+
 			ps.setString(1, uuid.toString());
 			rs = ps.executeQuery();
-			
+
 			while(rs.next()) {
 				return rs.getObject(column);
 			}
@@ -820,29 +816,65 @@ public class SQLManager {
 		}
 		return null;
 	}
-	
+
 	public void setPlayerData(UUID player, String column, Object data) {
 		Connection conn = null;
 		PreparedStatement ps = null;
-		
+
 		try {
 			createPlayer(player);
 			conn = pool.getConnection();
-			
+
 			String stmt = "UPDATE " + clansPlayerDataTable + " SET " + column + "=?  WHERE uuid=?";
 			ps = conn.prepareStatement(stmt);
-			
+
 			ps.setObject(1, data);
 			ps.setString(2, player.toString());
 			ps.executeUpdate();
-						
+
+			Main.playerdata.get(player).replace(column, data);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			pool.close(conn, ps, null);
 		}
 	}
-	
+
+	public HashMap<UUID, HashMap<String, Object>> getAllPlayerData() {
+
+		HashMap<UUID, HashMap<String, Object>> pd = new HashMap<UUID, HashMap<String, Object>>();
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			conn = pool.getConnection();
+
+			String stmt = "SELECT * FROM " + clansPlayerDataTable + " WHERE uuid IS NOT NULL";
+			ps = conn.prepareStatement(stmt);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				HashMap<String, Object> data = new HashMap<String, Object>();
+
+				data.put("clan", rs.getObject("clan"));
+				data.put("gold", rs.getObject("gold"));
+
+				pd.put(UUID.fromString((String) rs.getObject("uuid")), data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.close(conn, ps, rs);
+		}
+
+		return pd;
+	}
+
+	/*
 	public Object getPlayerData(UUID player, String column) {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -869,7 +901,8 @@ public class SQLManager {
 		}
 		return null;
 	}
-	
+
+
 	public Object getPlayerData(Player player, String column) {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -896,25 +929,29 @@ public class SQLManager {
 		}
 		return null;
 	}
+	*/
 	
 	public void savePlayer(UUID player) {
 		if(hasClan(player)) {
 			Clan old = new ClansPlayer(player).getRealClan();
-			if(getClan(old.getUniqueId()).getMatchingPlayer(player) == null) {
+			if(Main.getInstance().getClan(old.getUniqueId()).getMatchingPlayer(player) == null) {
 				this.setPlayerData(player, "clan", null);
+				Main.playerdata.get(player).replace("clan", null);
 			}
 		}
 	}
 	
 	public boolean hasClan(UUID player) {
+
+		if(!playerExists(player)) return false;
+
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet res = null;
 		
 		try {
-			if(!playerExists(player)) return false;
 			
-			if(getPlayerData(player, "clan") == null)
+			if(Main.playerdata.get(player).get("clan") == null)
 				return false;
 			
 			return true;
@@ -959,8 +996,7 @@ public class SQLManager {
 	public HashMap<Chunk, UUID> loadTerritories(){
 		
 		HashMap<Chunk, UUID> chunks = new HashMap<Chunk, UUID>();
-		for(UUID uuid : getClans()) {
-			Clan toLoad = this.getClan(uuid);
+		for(Clan toLoad : Main.clans) {
 			
 			for(Chunk chunk : toLoad.getTerritory()) {
 				chunks.put(chunk, toLoad.getUniqueId());
@@ -969,7 +1005,7 @@ public class SQLManager {
 		return chunks;
 	}
 	
-	public ArrayList<UUID> getClans(){
+	public ArrayList<Clan> getClans(){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet res = null;
@@ -980,11 +1016,12 @@ public class SQLManager {
 			ps = conn.prepareStatement(stmt);
 			
 			res = ps.executeQuery();
-			ArrayList<UUID> clans = new ArrayList<>();
+			ArrayList<Clan> clans = new ArrayList<>();
 			
 			while(res.next()) {
 				UUID uuid = UUID.fromString(res.getString("uuid"));
-				clans.add(uuid);
+				Clan clan = getClan(uuid);
+				clans.add(clan);
 			}
 			
 			

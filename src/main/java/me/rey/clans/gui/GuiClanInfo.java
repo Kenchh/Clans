@@ -61,7 +61,7 @@ public class GuiClanInfo extends GuiEditable {
 			ArrayList<String> names = new ArrayList<String>();
 			for(UUID related :clan.getRelations().keySet()) {
 				if(clan.getClanRelation(related).equals(relation)) {
-					names.add(this.sql.getClan(related).getName());
+					names.add(Main.getInstance().getClan(related).getName());
 				}
 			}
 			
