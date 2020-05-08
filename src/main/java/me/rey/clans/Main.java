@@ -61,7 +61,8 @@ public class Main extends JavaPlugin {
 	public static ArrayList<UUID> clans;
 	public HashMap<Chunk, UUID> territory;
 	private ServerParser stp;
-	
+	public static HashMap<UUID, HashMap<String, Object>> playerdata;
+
 	/*
 	 * Called on plugin enable
 	 */
@@ -81,7 +82,14 @@ public class Main extends JavaPlugin {
 		safeZoneCoords = this.getSQLManager().getSafeZones();
 		territory = new HashMap<Chunk, UUID>();
 		territory.putAll(this.getSQLManager().loadTerritories());
-		
+
+		playerdata = this.getSQLManager().getAllPlayerData();
+		for(UUID uuid : playerdata.keySet()) {
+			for(String column : playerdata.get(uuid).keySet()) {
+				Bukkit.broadcastMessage("--------------- DATA " + uuid.toString() + " : " + column + " : " + playerdata.get(uuid).get(column));
+			}
+		}
+
 		this.registerCommands();
 		this.registerListeners();
 		

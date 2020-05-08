@@ -268,31 +268,31 @@ public class SQLManager {
 	}
 	
 	public boolean createPlayer(UUID player) {
+		if(playerExists(player)) return false;
+
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
 		ResultSet res = null;
-		
+
 		try {
 			conn = pool.getConnection();
-			
+
 			String stmt = "SELECT * FROM " + clansPlayerDataTable + " WHERE uuid=?";
 			ps = conn.prepareStatement(stmt);
-			
+
 			ps.setString(1, player.toString());
 			res = ps.executeQuery();
-			
+
 			res.next();
-			if(!playerExists(player)) {
-				String stmt2 = "INSERT INTO " + clansPlayerDataTable
-						+ "(uuid,gold,clan) VALUE(?,?,?)";
-				insert = conn.prepareStatement(stmt2);
-				insert.setString(1, player.toString());
-				insert.setInt(2, 16000);
-				insert.setString(3, null);
-				insert.executeUpdate();
-				return true;
-			}
-			return false;
+
+			String stmt2 = "INSERT INTO " + clansPlayerDataTable
+					+ "(uuid,gold,clan) VALUE(?,?,?)";
+			insert = conn.prepareStatement(stmt2);
+			insert.setString(1, player.toString());
+			insert.setInt(2, 16000);
+			insert.setString(3, null);
+			insert.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -488,7 +488,7 @@ public class SQLManager {
 			
 			ps.setString(1, uuid.toString());
 			res = ps.executeQuery();
-			
+
 			while(res.next()) {
 				String name, founder;
 				long energy = 0;
@@ -820,7 +820,7 @@ public class SQLManager {
 		}
 		return null;
 	}
-	
+
 	public void setPlayerData(UUID player, String column, Object data) {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -842,8 +842,41 @@ public class SQLManager {
 			pool.close(conn, ps, null);
 		}
 	}
-	
-	public Object getPlayerData(UUID player, String column) {
+
+	public HashMap<UUID, HashMap<String, Object>> getAllPlayerData() {
+
+		HashMap<UUID, HashMap<String, Object>> pd = new HashMap<UUID, HashMap<String, Object>>();
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			conn = pool.getConnection();
+
+			String stmt = "SELECT * FROM " + clansPlayerDataTable + " WHERE uuid IS NOT NULL";
+			ps = conn.prepareStatement(stmt);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				HashMap<String, Object> data = new HashMap<String, Object>();
+
+				data.put("clan", rs.getObject("clan"));
+				data.put("gold", rs.getObject("gold"));
+
+				pd.put(UUID.fromString((String) rs.getObject("uuid")), data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pool.close(conn, ps, rs);
+		}
+
+		return pd;
+	}
+
+	public Object getPlayerDatad(UUID player, String column) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -869,7 +902,8 @@ public class SQLManager {
 		}
 		return null;
 	}
-	
+
+	/*
 	public Object getPlayerData(Player player, String column) {
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -896,6 +930,7 @@ public class SQLManager {
 		}
 		return null;
 	}
+	*/
 	
 	public void savePlayer(UUID player) {
 		if(hasClan(player)) {
@@ -907,14 +942,16 @@ public class SQLManager {
 	}
 	
 	public boolean hasClan(UUID player) {
+
+		if(!playerExists(player)) return false;
+
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet res = null;
 		
 		try {
-			if(!playerExists(player)) return false;
 			
-			if(getPlayerData(player, "clan") == null)
+			if(Main.playerdata.get(player).get("clan") == null)
 				return false;
 			
 			return true;
