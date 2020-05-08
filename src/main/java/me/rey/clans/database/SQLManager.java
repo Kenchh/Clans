@@ -996,8 +996,8 @@ public class SQLManager {
 	public HashMap<Chunk, UUID> loadTerritories(){
 		
 		HashMap<Chunk, UUID> chunks = new HashMap<Chunk, UUID>();
-		for(Clan toLoad : Main.clans) {
-			
+		for(Clan toLoad : getClans()) {
+
 			for(Chunk chunk : toLoad.getTerritory()) {
 				chunks.put(chunk, toLoad.getUniqueId());
 			}
