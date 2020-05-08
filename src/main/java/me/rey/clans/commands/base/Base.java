@@ -1,5 +1,6 @@
 package me.rey.clans.commands.base;
 
+import me.rey.clans.Main;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -30,7 +31,7 @@ public class Base extends ClansCommand {
 		} else if (args.length == 1) {
 			String name = args[0];
 			if(this.sql().clanExists(name)) {
-				Clan other = this.sql().getClan(name);
+				Clan other = Main.getInstance().getClan(name);
 				GuiClanInfo info = new GuiClanInfo(other, player);
 				info.setup();
 				info.open(player.getPlayer());

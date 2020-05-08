@@ -1,5 +1,6 @@
 package me.rey.clans.commands.staff;
 
+import me.rey.clans.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,7 +60,7 @@ public class Warpoints extends SubCommand {
 			return;
 		}
 		
-		Clan clan = this.sql().getClan(args[1]), self = new ClansPlayer((Player) sender).getClan();
+		Clan clan = Main.getInstance().getClan(args[1]), self = new ClansPlayer((Player) sender).getClan();
 		long currentWarpoints = self.getWarpointsOnClan(clan.getUniqueId());
 		
 		long toSet = action.calc(currentWarpoints, toAdd);

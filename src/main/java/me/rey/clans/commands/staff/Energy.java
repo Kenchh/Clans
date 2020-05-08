@@ -1,5 +1,6 @@
 package me.rey.clans.commands.staff;
 
+import me.rey.clans.Main;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -50,7 +51,7 @@ public class Energy extends SubCommand {
 			return;
 		}
 		
-		Clan clan = this.sql().getClan(args[1]);
+		Clan clan = Main.getInstance().getClan(args[1]);
 		long toSet = action.calc((int) clan.getEnergy(), energy) <= 0 ? 0 : action.calc((int) clan.getEnergy(), energy);
 		
 		clan.setEnergy(toSet);

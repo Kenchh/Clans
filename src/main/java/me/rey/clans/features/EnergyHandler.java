@@ -35,10 +35,9 @@ public class EnergyHandler extends BukkitRunnable {
 	
 	@Override
 	public void run() {
-		ArrayList<UUID> clans = Main.clans;
 		
-		for(UUID query : clans) {
-			Clan toDecrease = this.sql.getClan(query);
+		for(Clan clan : Main.clans) {
+			Clan toDecrease = clan;
 			if(toDecrease.isServerClan()) continue;
 			if(toDecrease.getEnergy() <= 0) continue;
 			if(toDecrease.getTerritory().size() == 0) continue;

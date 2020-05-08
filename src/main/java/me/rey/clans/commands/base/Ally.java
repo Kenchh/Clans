@@ -37,7 +37,7 @@ public class Ally extends SubCommand {
 		
 		ClansPlayer cp = new ClansPlayer((Player) sender);
 
-		Clan toRequest = this.sql().getClan(args[0]);
+		Clan toRequest = Main.getInstance().getClan(args[0]);
 		Clan from = cp.getClan();
 		boolean isPlayerWithClan = this.sql().playerExists(args[0]) && new ClansPlayer(this.sql().getPlayerFromName(args[0]).getUniqueId()).hasClan();
 		if(toRequest == null && !isPlayerWithClan) {
