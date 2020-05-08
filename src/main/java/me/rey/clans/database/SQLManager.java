@@ -289,6 +289,12 @@ public class SQLManager {
 			insert.setInt(2, 16000);
 			insert.setString(3, null);
 			insert.executeUpdate();
+
+			HashMap<String, Object> data = new HashMap<String, Object>();
+			data.put("clan", null);
+			data.put("gold", 16000);
+			Main.getInstance().playerdata.put(player, data);
+
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -996,8 +1002,8 @@ public class SQLManager {
 	public HashMap<Chunk, UUID> loadTerritories(){
 		
 		HashMap<Chunk, UUID> chunks = new HashMap<Chunk, UUID>();
-		for(Clan toLoad : Main.clans) {
-			
+		for(Clan toLoad : getClans()) {
+
 			for(Chunk chunk : toLoad.getTerritory()) {
 				chunks.put(chunk, toLoad.getUniqueId());
 			}

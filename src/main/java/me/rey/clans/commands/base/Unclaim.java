@@ -89,6 +89,7 @@ public class Unclaim extends SubCommand {
 		}
 		
 		self.removeTerritory(standing);
+		Claim.resetDrawnBorders(standing, player);
 		self.announceToClan("&s" + player.getName() + " &rhas &qunclaimed &ra piece of land. (&s" + standing.getX() + "&r, &s" + standing.getZ() + "&r)");
 		this.sql().saveClan(self);
 		

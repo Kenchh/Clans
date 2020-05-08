@@ -77,12 +77,11 @@ public class Main extends JavaPlugin {
 		stp = new ServerParser();
 		stp.init();
 		this.pm.registerEvents(stp, this);
-		
-		clans = this.getSQLManager().getClans();
+
 		safeZoneCoords = this.getSQLManager().getSafeZones();
 		territory = new HashMap<Chunk, UUID>();
 		territory.putAll(this.getSQLManager().loadTerritories());
-
+		clans = this.getSQLManager().getClans();
 		playerdata = this.getSQLManager().getAllPlayerData();
 
 		this.registerCommands();

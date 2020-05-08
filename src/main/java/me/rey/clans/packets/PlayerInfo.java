@@ -201,7 +201,7 @@ public class PlayerInfo {
         final Team goldCount = board.getTeam("goldCount");
         final Team territoryStanding = board.getTeam("terrStanding");
 
-        clanName.setPrefix(this.color(ClanRelations.SELF.getPlayerColor() + (!hasClan ? "&7Wilderness" : rp.getRealClan().getName())));
+        clanName.setPrefix(this.color(ClanRelations.SELF.getPlayerColor() + (!hasClan ? "&7None" : rp.getRealClan().getName())));
         energyCount.setPrefix(this.color("&a" + (!hasClan ? "N/A" : rp.getRealClan().getEnergyString())));
         goldCount.setPrefix(this.color("&6" + rp.getGold()));
         

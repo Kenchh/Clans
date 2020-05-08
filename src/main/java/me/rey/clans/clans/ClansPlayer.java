@@ -148,7 +148,12 @@ public class ClansPlayer {
 	}
 	
 	public Clan getRealClan() {
-		String uuid = (String) Main.playerdata.get(this.getUniqueId()).get("clan");
+		String uuid = null;
+		try {
+			uuid = (String) Main.playerdata.get(this.getUniqueId()).get("clan");
+		} catch (NullPointerException e) {
+			return null;
+		}
 		if(uuid == null) return null;
 		Clan toGive = Main.getInstance().getClan(UUID.fromString(uuid));
 		return toGive;
