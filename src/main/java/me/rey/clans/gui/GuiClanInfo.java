@@ -19,7 +19,6 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
-import me.rey.clans.database.SQLManager;
 import me.rey.clans.utils.References;
 import me.rey.clans.utils.Text;
 
@@ -27,14 +26,12 @@ public class GuiClanInfo extends GuiEditable {
 
 	private Clan clan;
 	private ClansPlayer player;
-	private SQLManager sql;
 	
 	public GuiClanInfo(Clan clan, ClansPlayer player) {
 		super("", 6, JavaPlugin.getPlugin(Main.class));
 		
 		this.clan = clan;
 		this.player = player;
-		this.sql = Main.getInstance().getSQLManager();
 	}
 
 	@Override

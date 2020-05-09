@@ -1,8 +1,5 @@
 package me.rey.clans.features;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 

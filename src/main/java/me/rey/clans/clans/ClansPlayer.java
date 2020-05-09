@@ -1,7 +1,6 @@
 package me.rey.clans.clans;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;

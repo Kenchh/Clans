@@ -293,7 +293,7 @@ public class SQLManager {
 			HashMap<String, Object> data = new HashMap<String, Object>();
 			data.put("clan", null);
 			data.put("gold", 16000);
-			Main.getInstance().playerdata.put(player, data);
+			Main.playerdata.put(player, data);
 
 			return true;
 		} catch (SQLException e) {
@@ -726,7 +726,7 @@ public class SQLManager {
 			}
 
 			if(toRemove != null)
-				Main.clans.remove(toRemove.getUniqueId());
+				Main.clans.remove(toRemove);
 
 
 			for(Chunk chunk : clan.getTerritory()) {

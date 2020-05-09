@@ -1,6 +1,8 @@
 package me.rey.clans.commands.base;
 
-import org.bukkit.Bukkit;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,9 +17,6 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Claim extends SubCommand {
 
