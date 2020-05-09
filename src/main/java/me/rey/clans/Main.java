@@ -252,7 +252,7 @@ public class Main extends JavaPlugin {
 
 	public Clan getClan(String name) {
 		for(Clan c : clans) {
-			if(c.getName().equals(name)) {
+			if(c.getName().equalsIgnoreCase(name)) {
 				return c;
 			}
 		}

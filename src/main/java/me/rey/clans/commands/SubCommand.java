@@ -1,5 +1,7 @@
 package me.rey.clans.commands;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.command.CommandSender;
@@ -23,6 +25,7 @@ public abstract class SubCommand {
 	private final boolean isPlayerExclusive;
 	private final String usage;
 	private boolean displayHelp, isForStaff;
+	private ArrayList<String> aliases = new ArrayList<String>();
 	
 	CommandSender sender;
 	private SQLManager sql = Main.getInstance().getSQLManager();
@@ -151,6 +154,19 @@ public abstract class SubCommand {
 	
 	public void setStaff(boolean staff) {
 		this.isForStaff = staff;
+	}
+
+	public void addAlias(String alias) {
+		if(aliases.contains(alias) == false) {
+			aliases.add(alias);
+		}
+	}
+
+	public boolean hasAlias(String alias) {
+		if(aliases.contains(alias)) {
+			return true;
+		}
+		return false;
 	}
 	
 	

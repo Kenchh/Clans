@@ -229,17 +229,16 @@ public class PlayerInfo {
         territoryStanding.setPrefix(this.color(name));
     }
 
-    public void updateNameTagsForAll() {
-	    Bukkit.broadcastMessage("updating nametags...");
+    public static void updateNameTagsForAll() {
         for(Player p : Bukkit.getOnlinePlayers()) {
             for (Player ps : Bukkit.getOnlinePlayers()) {
-                this.updateNameTags(p, ps);
-                this.updateNameTags(ps, p);
+                updateNameTags(p, ps);
+                updateNameTags(ps, p);
             }
         }
     }
 
-    public void updateNameTags(Player player, Player playersToSee) {
+    public static void updateNameTags(Player player, Player playersToSee) {
         ClansPlayer cp = new ClansPlayer(player);
         Clan clan = cp.getRealClan();
         boolean clanless = clan == null;
@@ -265,9 +264,11 @@ public class PlayerInfo {
 
         if(clanless) {
             nameprefix = ChatColor.YELLOW.toString();
-
         } else {
+
             clanname = clan.getName() + " ";
+            clanprefix = ClanRelations.NEUTRAL.getClanColor().toString();
+            nameprefix = ChatColor.YELLOW.toString();
 
             if(otherclan != null) {
                 if (clan.getUniqueId() == otherclan.getUniqueId()) {
@@ -293,8 +294,19 @@ public class PlayerInfo {
 
         }
 
-        NMSUtil.getAndSetField(teamColorPacket.getClass(), "c", teamColorPacket, clanprefix + clanname + nameprefix);
-        //NMSUtil.getAndSetField(teamColorPacket.getClass(), "d", teamColorPacket, "");
+        String s = clanprefix + clanname + nameprefix;
+
+        /* DecoderException Prevention (The received string length is longer than maximum allowed)*/
+        if(s.length() > 15) {
+            System.out.println("==============================" + s);
+            System.out.println("String length too long: " + s);
+            System.out.println("==============================");
+            return;
+        }
+
+        /* Prefix */ NMSUtil.getAndSetField(teamColorPacket.getClass(), "c", teamColorPacket, clanprefix + clanname + nameprefix);
+        /* Suffix */ NMSUtil.getAndSetField(teamColorPacket.getClass(), "d", teamColorPacket, "");
+
         ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(teamPacket);
         ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(teamColorPacket);
         ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(joinPacket);

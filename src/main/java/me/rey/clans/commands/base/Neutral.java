@@ -1,5 +1,6 @@
 package me.rey.clans.commands.base;
 
+import me.rey.clans.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ public class Neutral extends SubCommand {
 
 	public Neutral() {
 		super("neutral", "Revoke a relation on a clan", "/c neutral <Clan>", ClansRank.ADMIN, CommandType.CLAN, true);
+		this.addAlias("unally");
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class Neutral extends SubCommand {
 		
 		ClansPlayer cp = new ClansPlayer((Player) sender);
 
-		Clan toRequest = this.sql().getClan(args[0]);
+		Clan toRequest = Main.getInstance().getClan(args[0]);
 		Clan from = cp.getClan();
 		boolean isPlayerWithClan = this.sql().playerExists(args[0]) && new ClansPlayer(this.sql().getPlayerFromName(args[0]).getUniqueId()).hasClan();
 		if(toRequest == null && !isPlayerWithClan) {

@@ -70,7 +70,7 @@ public abstract class ClansCommand implements CommandExecutor {
 		if((this.getChilds() != null && this.getChilds().length != 0) && args.length > 0) {
 			
 			for(SubCommand argument : this.getChilds()) {
-				if(argument.command().equalsIgnoreCase(args[0])) {
+				if(argument.command().equalsIgnoreCase(args[0]) || argument.hasAlias(args[0])) {
 					argument.run(this, sender, Arrays.copyOfRange(args, 1, args.length));
 					return true;
 				}
