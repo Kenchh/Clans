@@ -1,10 +1,19 @@
 package me.rey.clans.packets;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import me.rey.clans.clans.Clan;
+import me.rey.clans.utils.NMSUtil;
+import me.rey.core.Warriors;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_8_R3.ScoreboardTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.scoreboard.CraftScoreboardManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -219,4 +228,77 @@ public class PlayerInfo {
         }
         territoryStanding.setPrefix(this.color(name));
     }
+
+    public void updateNameTagsForAll() {
+	    Bukkit.broadcastMessage("updating nametags...");
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            for (Player ps : Bukkit.getOnlinePlayers()) {
+                this.updateNameTags(p, ps);
+                this.updateNameTags(ps, p);
+            }
+        }
+    }
+
+    public void updateNameTags(Player player, Player playersToSee) {
+        ClansPlayer cp = new ClansPlayer(player);
+        Clan clan = cp.getRealClan();
+        boolean clanless = clan == null;
+
+
+        net.minecraft.server.v1_8_R3.Scoreboard scoreboard = ((CraftScoreboardManager)Bukkit.getServer().getScoreboardManager()).getNewScoreboard().getHandle();
+        ScoreboardTeam team = scoreboard.getTeam(clanless ? "None" : clan.getName());
+        if (team == null) {
+            team = scoreboard.createTeam(clanless ? "None" : clan.getName());
+        }
+
+        PacketPlayOutScoreboardTeam teamPacket = new PacketPlayOutScoreboardTeam(team, 0);
+        PacketPlayOutScoreboardTeam teamColorPacket = new PacketPlayOutScoreboardTeam(team, 2);
+        PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam(team, Arrays.asList(player.getName()), 3);
+        ClansPlayer toSee = new ClansPlayer(playersToSee);
+
+        Clan otherclan = toSee.getRealClan();
+
+        String clanprefix = "";
+        String clanname = "";
+
+        String nameprefix = "";
+
+        if(clanless) {
+            nameprefix = ChatColor.YELLOW.toString();
+
+        } else {
+            clanname = clan.getName() + " ";
+
+            if(otherclan != null) {
+                if (clan.getUniqueId() == otherclan.getUniqueId()) {
+                    clanprefix = ClanRelations.SELF.getClanColor().toString();
+                    nameprefix = ChatColor.AQUA.toString();
+                }
+
+                if (clan.getClanRelation(otherclan.getUniqueId()) == ClanRelations.NEUTRAL) {
+                    clanprefix = ClanRelations.NEUTRAL.getClanColor().toString();
+                    nameprefix = ChatColor.YELLOW.toString();
+                }
+
+                if (clan.getClanRelation(otherclan.getUniqueId()) == ClanRelations.ALLY) {
+                    clanprefix = ClanRelations.ALLY.getClanColor().toString();
+                    nameprefix = ChatColor.GREEN.toString();
+                }
+
+                if (clan.getClanRelation(otherclan.getUniqueId()) == ClanRelations.ENEMY) {
+                    clanprefix = ClanRelations.ENEMY.getClanColor().toString();
+                    nameprefix = ChatColor.LIGHT_PURPLE.toString();
+                }
+            }
+
+        }
+
+        NMSUtil.getAndSetField(teamColorPacket.getClass(), "c", teamColorPacket, clanprefix + clanname + nameprefix);
+        //NMSUtil.getAndSetField(teamColorPacket.getClass(), "d", teamColorPacket, "");
+        ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(teamPacket);
+        ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(teamColorPacket);
+        ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(joinPacket);
+
+    }
+
 }

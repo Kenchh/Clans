@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import me.rey.clans.packets.PlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -293,7 +294,7 @@ public class SQLManager {
 			HashMap<String, Object> data = new HashMap<String, Object>();
 			data.put("clan", null);
 			data.put("gold", 16000);
-			Main.getInstance().playerdata.put(player, data);
+			Main.playerdata.put(player, data);
 
 			return true;
 		} catch (SQLException e) {
@@ -306,6 +307,10 @@ public class SQLManager {
 	}
 	
 	public boolean createClan(UUID uuid, String name, String founder, Player leader) {
+
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
 		ResultSet res = null;
@@ -375,6 +380,10 @@ public class SQLManager {
 	}
 
 	public boolean saveClan(Clan clan) {
+
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
 		ResultSet res = null;
@@ -712,6 +721,10 @@ public class SQLManager {
 	}
 	
 	public void deleteClan(UUID uuid) {
+
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+
 		Connection conn = null;
 		PreparedStatement ps = null;
 
@@ -726,7 +739,7 @@ public class SQLManager {
 			}
 
 			if(toRemove != null)
-				Main.clans.remove(toRemove.getUniqueId());
+				Main.clans.remove(toRemove);
 
 
 			for(Chunk chunk : clan.getTerritory()) {
@@ -824,6 +837,7 @@ public class SQLManager {
 	}
 
 	public void setPlayerData(UUID player, String column, Object data) {
+
 		Connection conn = null;
 		PreparedStatement ps = null;
 
