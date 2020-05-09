@@ -76,7 +76,8 @@ public class ClaimProtection implements Listener {
 					return;
 			}
 
-			ErrorCheck.noPermissionInClaim(e.getPlayer(), this.isInOtherClaim(e.getPlayer(), clicked));
+			Clan found = this.isInOtherClaim(e.getPlayer(), clicked);
+			ErrorCheck.noPermissionInClaim(e.getPlayer(), found);
 			e.setCancelled(true);
 			return;
 		}
