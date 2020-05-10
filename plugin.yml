@@ -4,12 +4,10 @@ version: 1.0.0
 author: rey
 depend: [Warriors, ReinforcedCore, Parser]
 commands:
+    focus:
     c:
-        usage: /<command>
         aliases: [clan, clans, faction, factions]
     ac:
-        usage: /<command>
         aliases: [allychat]
     cc:
-        usage: /<command>
         aliases: [clanchat]

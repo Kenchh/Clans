@@ -19,6 +19,7 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.commands.AllyChat;
 import me.rey.clans.commands.ClanChat;
 import me.rey.clans.commands.ClansCommand;
+import me.rey.clans.commands.Focus;
 import me.rey.clans.commands.base.Base;
 import me.rey.clans.database.SQLManager;
 import me.rey.clans.events.ClaimProtection;
@@ -47,6 +48,7 @@ import me.rey.clans.playerdisplay.PlayerInfo;
 import me.rey.clans.shops.Shops;
 import me.rey.clans.siege.SiegeTriggerEvent;
 import me.rey.clans.utils.Text;
+import me.rey.clans.utils.UtilFocus;
 
 public class Main extends JavaPlugin {
 	
@@ -184,7 +186,8 @@ public class Main extends JavaPlugin {
 		this.commands = new ArrayList<ClansCommand>(Arrays.asList(
 				new Base(),
 				new ClanChat(),
-				new AllyChat()
+				new AllyChat(),
+				new Focus()
 				));
 	}
 	
@@ -204,6 +207,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new CombatBaseRelation(), this);
 		pm.registerEvents(new Shops(), this);
 		pm.registerEvents(new SiegeTriggerEvent(), this);
+		pm.registerEvents(new UtilFocus(), this);
 	}
 	
 	public void loadConfig() {

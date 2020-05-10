@@ -16,10 +16,12 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.packets.Nametag;
+import me.rey.clans.utils.UtilFocus;
 
 public class PlayerInfo implements Listener {
 	
 	private HashMap<Player, CustomScoreboard> scoreboardCache = new HashMap<>();
+	
 	final String[] scoreboardTitles = {
 			"&b&lWarriors 1.0",
 			"&f&lW&b&larriors 1.0",
@@ -83,7 +85,7 @@ public class PlayerInfo implements Listener {
     			"&eGold &f" + gold,
     			"&eEnergy &f" + energy,
     			"",
-    			territory,
+    			(Main.getInstance().getClanFromTerritory(standing) != null && Main.getInstance().getClanFromTerritory(standing).isServerClan() ? "&f" : "") + territory,
     			"",
     			null,
     			null,
@@ -153,6 +155,7 @@ public class PlayerInfo implements Listener {
 
         String clanprefix = "", clanname = "", nameprefix = ClanRelations.NEUTRAL.getPlayerColor().toString();
         
+        
         if (!clanless){
             clanname = clan.getName() + " ";
             clanprefix = ClanRelations.NEUTRAL.getClanColor().toString();
@@ -162,7 +165,12 @@ public class PlayerInfo implements Listener {
             	clanprefix = r.getClanColor().toString();
             	nameprefix = r.getPlayerColor().toString();
             }
-
+        }
+        
+        if (toSee.hasFocus() && toSee.getFocus().equals(player)) {
+        	// Is Focusing Him
+        	clanprefix = UtilFocus.CLAN_FOCUS.toString();
+        	nameprefix = UtilFocus.PLAYER_FOCUS.toString();
         }
 
         Nametag packet = new Nametag(player, clan == null ? "None" : clan.getName(), clanprefix + clanname + nameprefix);
