@@ -308,9 +308,6 @@ public class SQLManager {
 	
 	public boolean createClan(UUID uuid, String name, String founder, Player leader) {
 
-		PlayerInfo info = new PlayerInfo();
-		info.updateNameTagsForAll();
-
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
 		ResultSet res = null;
@@ -372,6 +369,9 @@ public class SQLManager {
 			Main.clans.add(getClan(uuid));
 		
 		
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+		
 		return true;
 	}
 	
@@ -380,9 +380,6 @@ public class SQLManager {
 	}
 
 	public boolean saveClan(Clan clan) {
-
-		PlayerInfo info = new PlayerInfo();
-		info.updateNameTagsForAll();
 
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
@@ -482,6 +479,11 @@ public class SQLManager {
 			pool.close(conn, ps, res);
 			pool.close(null, insert, null);
 		}
+		
+		
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+		
 		return false;
 	}
 
@@ -722,9 +724,6 @@ public class SQLManager {
 	
 	public void deleteClan(UUID uuid) {
 
-		PlayerInfo info = new PlayerInfo();
-		info.updateNameTagsForAll();
-
 		Connection conn = null;
 		PreparedStatement ps = null;
 
@@ -788,6 +787,9 @@ public class SQLManager {
 			pool.close(conn, ps, null);
 		}
 
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+		
 	}
 	
 	public void setClanData(UUID uuid, String column, Object data) {

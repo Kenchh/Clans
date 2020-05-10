@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.rey.clans.Main;
+import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.sidebar.CustomScoreboard;
@@ -138,51 +139,35 @@ public class PlayerInfo implements Listener {
         for(Player p : Bukkit.getOnlinePlayers()) {
             for (Player ps : Bukkit.getOnlinePlayers()) {
                 this.updateNameTags(p, ps);
-                this.updateNameTags(ps, p);
+                if(p != ps) this.updateNameTags(ps, p);
             }
         }
     }
 
     public void updateNameTags(Player player, Player playersToSee) {
-//        ClansPlayer cp = new ClansPlayer(player);
-//        Clan clan = cp.getRealClan();
-//        boolean clanless = clan == null;
-//
-//
-//        net.minecraft.server.v1_8_R3.Scoreboard scoreboard = ((CraftScoreboardManager)Bukkit.getServer().getScoreboardManager()).getNewScoreboard().getHandle();
-//        ScoreboardTeam team = scoreboard.getTeam(clanless ? "None" : clan.getName());
-//        if (team == null) {
-//            team = scoreboard.createTeam(clanless ? "None" : clan.getName());
-//        }
-//
-//        PacketPlayOutScoreboardTeam teamPacket = new PacketPlayOutScoreboardTeam(team, 0);
-//        PacketPlayOutScoreboardTeam teamColorPacket = new PacketPlayOutScoreboardTeam(team, 2);
-//        PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam(team, Arrays.asList(player.getName()), 3);
-//        ClansPlayer toSee = new ClansPlayer(playersToSee);
-//
-//        Clan otherclan = toSee.getRealClan();
-//
-//        String clanprefix = "", clanname = "", nameprefix = "";
-//
-//        if(clanless) {
-//            nameprefix = ClanRelations.NEUTRAL.getPlayerColor().toString();
-//        } else {
-//            clanname = clan.getName() + " ";
-//
-//            if(otherclan != null) {
-//            	ClanRelations r = clan.getClanRelation(otherclan.getUniqueId());
-//            	clanprefix = r.getClanColor().toString();
-//            	nameprefix = r.getPlayerColor().toString();
-//            }
-//
-//        }
-//
-//        NMSUtil.getAndSetField(teamColorPacket.getClass(), "c", teamColorPacket, clanprefix + clanname + nameprefix);
-//        //NMSUtil.getAndSetField(teamColorPacket.getClass(), "d", teamColorPacket, "");
-//        ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(teamPacket);
-//        ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(teamColorPacket);
-//        ((CraftPlayer)toSee.getPlayer()).getHandle().playerConnection.sendPacket(joinPacket);
+        ClansPlayer cp = new ClansPlayer(player);
+        ClansPlayer toSee = new ClansPlayer(playersToSee);
+        
+        Clan clan = cp.getRealClan();
+        Clan otherclan = toSee.getRealClan();
+        boolean clanless = clan == null;
 
+        String clanprefix = "", clanname = "", nameprefix = ClanRelations.NEUTRAL.getPlayerColor().toString();
+        
+        if (!clanless){
+            clanname = clan.getName() + " ";
+            clanprefix = ClanRelations.NEUTRAL.getClanColor().toString();
+
+            if(otherclan != null) {
+            	ClanRelations r = clan.getClanRelation(otherclan.getUniqueId());
+            	clanprefix = r.getClanColor().toString();
+            	nameprefix = r.getPlayerColor().toString();
+            }
+
+        }
+
+        Nametag packet = new Nametag(player, clan == null ? "None" : clan.getName(), clanprefix + clanname + nameprefix);
+        packet.send(playersToSee);
     }
 
 }
