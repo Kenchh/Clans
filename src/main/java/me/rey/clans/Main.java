@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.rey.clans.clans.Clan;
 import me.rey.clans.commands.AllyChat;
@@ -128,6 +129,16 @@ public class Main extends JavaPlugin {
 		for(Player online : Bukkit.getOnlinePlayers()) {
 			info.setupSidebar(online);
 		}
+		
+		/*
+		 * NAMETAGS
+		 */
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				info.updateNameTagsForAll();
+			}
+		}.runTaskTimerAsynchronously(this, 0, 5);
 	}
 	
 	
