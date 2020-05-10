@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import me.rey.clans.packets.PlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -25,6 +24,7 @@ import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.clans.ServerClan;
+import me.rey.clans.playerdisplay.PlayerInfo;
 
 public class SQLManager {
 	

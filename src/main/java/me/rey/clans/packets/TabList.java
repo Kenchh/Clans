@@ -48,6 +48,10 @@ public class TabList extends Packets {
 		this.footer = footer;
 		return this;
 	}
+	
+	public void clear(LivingEntity entity) {
+		
+	}
 
 	@Override
 	public void send(LivingEntity entity) {

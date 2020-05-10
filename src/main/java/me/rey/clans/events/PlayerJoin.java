@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import me.rey.clans.packets.PlayerInfo;
+import me.rey.clans.playerdisplay.PlayerInfo;
 import me.rey.clans.utils.Text;
 
 public class PlayerJoin implements Listener {

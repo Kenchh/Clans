@@ -43,7 +43,7 @@ import me.rey.clans.items.crafting.marksman.MHelmet1;
 import me.rey.clans.items.crafting.marksman.MHelmet2;
 import me.rey.clans.items.crafting.marksman.MLeggings1;
 import me.rey.clans.items.crafting.marksman.MLeggings2;
-import me.rey.clans.packets.PlayerInfo;
+import me.rey.clans.playerdisplay.PlayerInfo;
 import me.rey.clans.shops.Shops;
 import me.rey.clans.siege.SiegeTriggerEvent;
 import me.rey.clans.utils.Text;

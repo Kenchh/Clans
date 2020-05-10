@@ -1,4 +1,4 @@
-package me.rey.clans.packets;
+package me.rey.clans.playerdisplay;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,9 +15,7 @@ import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
-import me.rey.clans.packets.TabList.TabSize;
-import me.rey.clans.playerdisplay.CustomScoreboard;
-import me.rey.clans.playerdisplay.UpdateScoreboardEvent;
+import me.rey.clans.packets.Nametag;
 
 public class PlayerInfo implements Listener {
 	
@@ -183,8 +181,6 @@ public class PlayerInfo implements Listener {
     }
     
     public void updateTab(Player p) {
-//    	String[] empty = {""};
-//    	TabList tb = new TabList(TabSize.FOUR, empty, empty);
-//    	tb.send(p);
+    	// TODO: Display custom tablist
     }
 }
