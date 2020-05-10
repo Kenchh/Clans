@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.rey.clans.clans.Clan;
 import me.rey.clans.commands.AllyChat;
@@ -62,6 +61,8 @@ public class Main extends JavaPlugin {
 	public HashMap<Chunk, UUID> territory;
 	private ServerParser stp;
 	public static HashMap<UUID, HashMap<String, Object>> playerdata;
+	
+	private PlayerInfo info;
 
 	/*
 	 * Called on plugin enable
@@ -122,17 +123,11 @@ public class Main extends JavaPlugin {
 		/*
 		 * SCOREBOARD
 		 */
-		PlayerInfo info = new PlayerInfo();
-		new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				for(Player online : Bukkit.getOnlinePlayers()) {
-					info.updateScoreboard(online);
-				}
-			}
-			
-		}.runTaskTimer(this, 0, 4);
+		info = new PlayerInfo();
+		pm.registerEvents(info, this);
+		for(Player online : Bukkit.getOnlinePlayers()) {
+			info.setupSidebar(online);
+		}
 	}
 	
 	

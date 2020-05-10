@@ -80,35 +80,37 @@ public class ClaimProtection implements Listener {
 			ErrorCheck.noPermissionInClaim(e.getPlayer(), found);
 			e.setCancelled(true);
 			return;
-		}
+		} else {
 
-		// IRON DOOR
-		if (clicked.getType().equals(Material.IRON_DOOR_BLOCK)) {
-			BlockState blockState = clicked.getState();
-			if(((Door) blockState.getData()).isTopHalf()){
-				blockState = clicked.getRelative(BlockFace.DOWN).getState();
+			// IRON DOOR
+			if (clicked.getType().equals(Material.IRON_DOOR_BLOCK)) {
+				BlockState blockState = clicked.getState();
+				if(((Door) blockState.getData()).isTopHalf()){
+					blockState = clicked.getRelative(BlockFace.DOWN).getState();
+				}
+
+				Openable openable = (Openable) blockState.getData();
+				openable.setOpen(!openable.isOpen());
+				blockState.setData((MaterialData) openable);
+
+				blockState.update();
+				e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
+				return;
 			}
 
-			Openable openable = (Openable) blockState.getData();
-			openable.setOpen(!openable.isOpen());
-			blockState.setData((MaterialData) openable);
+			// IRON TRAP DOOR
+			if (clicked.getType().equals(Material.IRON_TRAPDOOR)) {
+				BlockState blockState = clicked.getState();
 
-			blockState.update();
-			e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
-			return;
-		}
+				Openable openable = (Openable) blockState.getData();
+				openable.setOpen(!openable.isOpen());
+				blockState.setData((MaterialData) openable);
 
-		// IRON TRAP DOOR
-		if (clicked.getType().equals(Material.IRON_TRAPDOOR)) {
-			BlockState blockState = clicked.getState();
-
-			Openable openable = (Openable) blockState.getData();
-			openable.setOpen(!openable.isOpen());
-			blockState.setData((MaterialData) openable);
-
-			blockState.update();
-			e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
-			return;
+				blockState.update();
+				e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
+				return;
+			}
+			
 		}
 	}
 
