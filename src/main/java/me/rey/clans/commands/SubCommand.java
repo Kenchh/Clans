@@ -13,6 +13,7 @@ import me.rey.clans.database.SQLManager;
 import me.rey.clans.enums.CommandType;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
+import me.rey.clans.utils.Text;
 import net.md_5.bungee.api.ChatColor;
 
 public abstract class SubCommand {
@@ -128,8 +129,7 @@ public abstract class SubCommand {
 	}
 	
 	public void sendMessageWithPrefix(String prefix, String message) {
-		message = message.replaceAll("&r", "&7").replaceAll("&s", "&e");
-		sendMessage(String.format("&9%s> &7%s", prefix, message));
+		sendMessage(Text.format(prefix, message));
 	}
 	
 	public void sendMessage(String message) {
