@@ -1,4 +1,4 @@
-package me.rey.clans.sidebar;
+package me.rey.clans.playerdisplay;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

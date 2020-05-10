@@ -15,8 +15,9 @@ import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
-import me.rey.clans.sidebar.CustomScoreboard;
-import me.rey.clans.sidebar.UpdateScoreboardEvent;
+import me.rey.clans.packets.TabList.TabSize;
+import me.rey.clans.playerdisplay.CustomScoreboard;
+import me.rey.clans.playerdisplay.UpdateScoreboardEvent;
 
 public class PlayerInfo implements Listener {
 	
@@ -170,4 +171,20 @@ public class PlayerInfo implements Listener {
         packet.send(playersToSee);
     }
 
+    // END
+    
+    
+    
+    /*
+     * TAB LIST
+     */
+    public void updateTabListForAll() {
+    	for(Player p : Bukkit.getOnlinePlayers()) this.updateTab(p);
+    }
+    
+    public void updateTab(Player p) {
+//    	String[] empty = {""};
+//    	TabList tb = new TabList(TabSize.FOUR, empty, empty);
+//    	tb.send(p);
+    }
 }

@@ -137,6 +137,7 @@ public class Main extends JavaPlugin {
 			@Override
 			public void run() {
 				info.updateNameTagsForAll();
+				info.updateTabListForAll();
 			}
 		}.runTaskTimerAsynchronously(this, 0, 5);
 	}

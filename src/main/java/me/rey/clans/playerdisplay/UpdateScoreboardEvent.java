@@ -1,4 +1,4 @@
-package me.rey.clans.sidebar;
+package me.rey.clans.playerdisplay;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
