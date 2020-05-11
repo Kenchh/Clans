@@ -771,12 +771,14 @@ public class SQLManager {
 
 			for(UUID uR : clan.getRelations().keySet()) {
 				Clan related = Main.getInstance().getClan(uR);
+				if(related == null || related.compare(clan)) continue;
 				related.removeRelation(clan.getUniqueId());
 				saveClan(related);
 			}
 
 			for(UUID uR : clan.getWarpoints().keySet()) {
 				Clan enemy = Main.getInstance().getClan(uR);
+				if(enemy == null || enemy.compare(clan)) continue;
 				enemy.setWarpoint(clan.getUniqueId(), 0);
 				saveClan(enemy);
 			}

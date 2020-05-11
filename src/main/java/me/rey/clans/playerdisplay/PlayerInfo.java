@@ -167,13 +167,15 @@ public class PlayerInfo implements Listener {
             }
         }
         
+        boolean focus = false;
         if (toSee.hasFocus() && toSee.getFocus().equals(player)) {
         	// Is Focusing Him
         	clanprefix = UtilFocus.CLAN_FOCUS.toString();
         	nameprefix = UtilFocus.PLAYER_FOCUS.toString();
+        	focus = true;
         }
 
-        Nametag packet = new Nametag(player, clan == null ? "None" : clan.getName(), clanprefix + clanname + nameprefix);
+        Nametag packet = new Nametag(player, focus ? "Focus" : clan == null ? "None" : clan.getName(), clanprefix + clanname + nameprefix);
         packet.send(playersToSee);
     }
 
