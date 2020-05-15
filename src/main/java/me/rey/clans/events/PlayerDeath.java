@@ -14,9 +14,9 @@ import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.database.SQLManager;
 import me.rey.clans.events.custom.WarpointChangeEvent;
 import me.rey.clans.siege.Siege;
-import me.rey.core.events.customevents.DeathEvent;
-import me.rey.core.players.DeathMessage;
-import me.rey.core.players.PlayerHit;
+import me.rey.core.events.customevents.combat.DeathEvent;
+import me.rey.core.players.combat.DeathMessage;
+import me.rey.core.players.combat.PlayerHit;
 
 public class PlayerDeath implements Listener {
 	

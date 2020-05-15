@@ -15,7 +15,7 @@ import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.Text;
 import me.rey.clans.utils.UtilFocus;
 import me.rey.core.Warriors;
-import me.rey.core.players.PlayerHitCache;
+import me.rey.core.players.combat.PlayerHitCache;
 
 public class ClansPlayer {
 	

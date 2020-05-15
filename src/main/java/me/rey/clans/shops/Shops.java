@@ -9,11 +9,11 @@ import org.bukkit.event.Listener;
 
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.packets.Title;
-import me.rey.core.events.customevents.AbilityUseEvent;
-import me.rey.core.events.customevents.CombatTimerEndEvent;
-import me.rey.core.events.customevents.CombatTimerTickEvent;
-import me.rey.core.events.customevents.damage.DamageEvent;
-import me.rey.core.utils.Text;
+import me.rey.clans.utils.Text;
+import me.rey.core.events.customevents.ability.AbilityUseEvent;
+import me.rey.core.events.customevents.combat.CombatTimerEndEvent;
+import me.rey.core.events.customevents.combat.CombatTimerTickEvent;
+import me.rey.core.events.customevents.combat.DamageEvent;
 
 public class Shops implements Listener {
 	
@@ -63,10 +63,19 @@ public class Shops implements Listener {
 			return;
 
 		Player d = (Player) e.getDamagee();
-		if (new ClansPlayer(d).isInSafeZone() && !new ClansPlayer(d).isInCombat()) {
-			ClansPlayer cp = new ClansPlayer(e.getDamager());
-			cp.sendMessageWithPrefix("Error", "You cannot hit players in a Safe Zone!");
+		ClansPlayer damager = new ClansPlayer(e.getDamager());
+		ClansPlayer damagee = new ClansPlayer(d);
+		
+		if (damagee.isInSafeZone() && !damagee.isInCombat()) {
+			damager.sendMessageWithPrefix("Error", "You cannot hit players in a Safe Zone!");
 			e.setCancelled(true);
+			return;
+		}
+		
+		if(damager.isInSafeZone() && !damager.isInCombat() && !damagee.isInSafeZone()) {
+			damager.sendMessageWithPrefix("Error", "You cannot hit players while inside a Safe Zone!");
+			e.setCancelled(true);
+			return;
 		}
 	}
 
