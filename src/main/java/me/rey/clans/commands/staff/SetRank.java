@@ -1,5 +1,6 @@
 package me.rey.clans.commands.staff;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,6 +10,9 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanHierarchyEvent;
+import me.rey.clans.events.clans.ClanHierarchyEvent.HierarchyAction;
+import me.rey.clans.events.clans.ClanHierarchyEvent.HierarchyReason;
 import me.rey.clans.utils.ErrorCheck;
 
 public class SetRank extends SubCommand {
@@ -39,7 +43,7 @@ public class SetRank extends SubCommand {
 		ClansPlayer toS = toSet.getPlayer(args[0]);
 		String name = toS.isOnline() ? toS.getPlayer().getName() : toS.getOfflinePlayer().getName();
 		
-		ClansRank rank = null;
+		ClansRank rank = null, origin = toSet.getPlayerRank(toSet.getUniqueId());
 		for(ClansRank r : ClansRank.values()) {
 			if(r.getName().equalsIgnoreCase(args[1]))
 				rank = r;
@@ -60,6 +64,13 @@ public class SetRank extends SubCommand {
 			toSet.announceToClan(String.format("&s%s&r has made &s%s &ra(n) %s%s&r!", cp.getPlayer().getName(),
 					name, rank.getColor(), rank.getName()));
 		}
+		
+		/*
+		 * EVENT HANDLING
+		 */
+		HierarchyAction action = rank.getPower() < origin.getPower() ? HierarchyAction.DEMOTE : HierarchyAction.PROMOTE;
+		ClanHierarchyEvent event = new ClanHierarchyEvent(toSet, cp.getPlayer(), action, HierarchyReason.STAFF, toS, origin, rank);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

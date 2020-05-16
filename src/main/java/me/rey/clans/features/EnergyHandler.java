@@ -1,11 +1,14 @@
 package me.rey.clans.features;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.database.SQLManager;
+import me.rey.clans.events.clans.ClanTerritoryUnclaimEvent;
+import me.rey.clans.events.clans.ClanTerritoryUnclaimEvent.UnclaimReason;
 
 public class EnergyHandler extends BukkitRunnable {
 
@@ -43,8 +46,15 @@ public class EnergyHandler extends BukkitRunnable {
 			this.sql.saveClan(toDecrease);
 			
 			if(toDecrease.getEnergy() <= 0) {
+				/*
+				 * EVENT HANDLING
+				 */
+				ClanTerritoryUnclaimEvent event = new ClanTerritoryUnclaimEvent(toDecrease, null, toDecrease.getTerritory(), UnclaimReason.ENERGY, true);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				
 				toDecrease.unclaimAll();
 				toDecrease.announceToClan("Your Clan Energy has &qDEPLETED&r!");
+				
 				this.sql.saveClan(toDecrease);
 			}
 			

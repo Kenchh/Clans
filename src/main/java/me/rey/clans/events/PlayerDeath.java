@@ -12,7 +12,7 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.database.SQLManager;
-import me.rey.clans.events.custom.WarpointChangeEvent;
+import me.rey.clans.events.clans.ClanWarpointEvent;
 import me.rey.clans.siege.Siege;
 import me.rey.core.events.customevents.combat.DeathEvent;
 import me.rey.core.players.combat.DeathMessage;
@@ -81,7 +81,7 @@ public class PlayerDeath implements Listener {
 			toLoseWP.announceToClan("&9(!) &7Your clan has &qLOST &ra War Point to &s" + color + toGiveWP.getName() + " &7(" + color + sLost + lost + "&7).", false);
 			toGiveWP.announceToClan("&9(!) &7Your clan has &wGAINED &ra War Point on &s" + color + toLoseWP.getName() + " &7(" + color + sWon + won + "&7).", false);
 			
-			WarpointChangeEvent event = new WarpointChangeEvent(toGiveWP, toLoseWP, won);
+			ClanWarpointEvent event = new ClanWarpointEvent(toGiveWP, toLoseWP, won);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 			
 			sql.saveClan(toGiveWP);

@@ -12,7 +12,7 @@ import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
 import me.rey.clans.enums.MathAction;
-import me.rey.clans.events.custom.WarpointChangeEvent;
+import me.rey.clans.events.clans.ClanWarpointEvent;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.core.utils.Text;
 
@@ -74,10 +74,10 @@ public class Warpoints extends SubCommand {
 		self.announceToClan(String.format("Your War Points on &s%s &rhave been set to: &s%s&r.", clan.getName(), toSet));
 		
 		if(action == MathAction.REMOVE) {
-			WarpointChangeEvent event = new WarpointChangeEvent(clan, self, -toSet);
+			ClanWarpointEvent event = new ClanWarpointEvent(clan, self, -toSet);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 		} else if (action == MathAction.ADD){
-			WarpointChangeEvent event = new WarpointChangeEvent(self, clan, toSet);
+			ClanWarpointEvent event = new ClanWarpointEvent(self, clan, toSet);
 			Bukkit.getServer().getPluginManager().callEvent(event);
 		}
 	}

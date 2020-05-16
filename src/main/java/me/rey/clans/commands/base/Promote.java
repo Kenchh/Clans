@@ -1,5 +1,6 @@
 package me.rey.clans.commands.base;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,6 +10,9 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanHierarchyEvent;
+import me.rey.clans.events.clans.ClanHierarchyEvent.HierarchyAction;
+import me.rey.clans.events.clans.ClanHierarchyEvent.HierarchyReason;
 import me.rey.clans.utils.ErrorCheck;
 public class Promote extends SubCommand {
 
@@ -38,6 +42,7 @@ public class Promote extends SubCommand {
 		ClansPlayer toProm = toPromote.getPlayer(args[0]);
 		String name = toProm.isOnline() ? toProm.getPlayer().getName() : toProm.getOfflinePlayer().getName();
 		
+		ClansRank origin = toPromote.getPlayerRank(toProm.getUniqueId());
 		if(toPromote.getPlayerRank(toProm.getUniqueId()).getPower() >= toPromote.getPlayerRank(cp.getUniqueId()).getPower()) {
 			ErrorCheck.playerNotOurank(sender);
 			return;
@@ -59,6 +64,11 @@ public class Promote extends SubCommand {
 		
 		this.sql().saveClan(toPromote);
 		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanHierarchyEvent event = new ClanHierarchyEvent(toPromote, cp.getPlayer(), HierarchyAction.PROMOTE, HierarchyReason.NORMAL, toProm, origin, destination);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

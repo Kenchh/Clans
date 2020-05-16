@@ -1,5 +1,6 @@
 package me.rey.clans.commands.base;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,6 +10,8 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanKickEvent;
+import me.rey.clans.events.clans.ClanLeaveEvent;
 import me.rey.clans.utils.ErrorCheck;
 
 public class Leave extends SubCommand {
@@ -34,6 +37,12 @@ public class Leave extends SubCommand {
 		cp.leaveClan();
 		toLeave.announceToClan("&s" + cp.getPlayer().getName() + " &rhas left the Clan!", cp);
 
+		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanLeaveEvent event = new ClanLeaveEvent(toLeave, cp.getPlayer());
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

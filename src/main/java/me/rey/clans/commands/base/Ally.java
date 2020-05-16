@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,8 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanUpdateRelationEvent;
+import me.rey.clans.events.clans.ClanUpdateRelationEvent.RelationAction;
 import me.rey.clans.utils.ErrorCheck;
 
 public class Ally extends SubCommand {
@@ -65,6 +68,11 @@ public class Ally extends SubCommand {
 			return;
 		}
 		
+		/*
+		 * EVENT
+		 */
+		RelationAction action = RelationAction.ACCEPT_ALLY;
+		
 		ArrayList<UUID> requestsFromClan = requests.get(to.getUniqueId()) == null ? new ArrayList<>() : requests.get(to.getUniqueId());
 		ArrayList<UUID> self = requests.get(from.getUniqueId()) == null ? new ArrayList<>() : requests.get(from.getUniqueId());
 		if(requestsFromClan.isEmpty() || !requestsFromClan.contains(from.getUniqueId()) || self.contains(to.getUniqueId())) {
@@ -81,6 +89,8 @@ public class Ally extends SubCommand {
 			
 			self.add(to.getUniqueId());
 			requests.put(from.getUniqueId(), self);
+			
+			action = RelationAction.REQUEST_ALLY;
 			
 			new BukkitRunnable() {
 				
@@ -107,6 +117,13 @@ public class Ally extends SubCommand {
 		
 		from.announceToClan("&s" + to.getName() + " &rhas " + ClanRelations.ALLY.getPlayerColor() + "&rallied you!", cp);
 		to.announceToClan("&s" + from.getName() + " &rhas " + ClanRelations.ALLY.getPlayerColor() + "&rallied you!", cp);
+		
+		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanUpdateRelationEvent event = new ClanUpdateRelationEvent(from, to, cp.getPlayer(), action);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package me.rey.clans.commands.base;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,6 +10,9 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanHierarchyEvent;
+import me.rey.clans.events.clans.ClanHierarchyEvent.HierarchyAction;
+import me.rey.clans.events.clans.ClanHierarchyEvent.HierarchyReason;
 import me.rey.clans.utils.ErrorCheck;
 public class Demote extends SubCommand {
 
@@ -43,6 +47,7 @@ public class Demote extends SubCommand {
 			return;
 		}
 		
+		ClansRank origin = toPromote.getPlayerRank(toProm.getUniqueId());
 		boolean success = toPromote.demote(toProm.getUniqueId());
 		if(!success) {
 			this.sendMessageWithPrefix("Clan", "This player has the lowest rank!");
@@ -54,6 +59,12 @@ public class Demote extends SubCommand {
 				name, destination.getColor(), destination.getName()));
 		this.sql().saveClan(toPromote);
 		
+		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanHierarchyEvent event = new ClanHierarchyEvent(toPromote, cp.getPlayer(), HierarchyAction.DEMOTE, HierarchyReason.NORMAL, toProm, origin, destination);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override
