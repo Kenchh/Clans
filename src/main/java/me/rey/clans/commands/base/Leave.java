@@ -10,7 +10,6 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
-import me.rey.clans.events.clans.ClanKickEvent;
 import me.rey.clans.events.clans.ClanLeaveEvent;
 import me.rey.clans.utils.ErrorCheck;
 

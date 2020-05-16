@@ -43,7 +43,7 @@ public class SetRank extends SubCommand {
 		ClansPlayer toS = toSet.getPlayer(args[0]);
 		String name = toS.isOnline() ? toS.getPlayer().getName() : toS.getOfflinePlayer().getName();
 		
-		ClansRank rank = null, origin = toSet.getPlayerRank(toSet.getUniqueId());
+		ClansRank rank = null, origin = toSet.getPlayerRank(toS.getUniqueId());
 		for(ClansRank r : ClansRank.values()) {
 			if(r.getName().equalsIgnoreCase(args[1]))
 				rank = r;

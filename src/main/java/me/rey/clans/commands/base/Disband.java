@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
@@ -23,13 +24,16 @@ public class Disband extends SubCommand {
 		ClansPlayer cp = new ClansPlayer((Player) sender);
 		cp.getClan().announceToClan("&q" + cp.getPlayer().getName() + " &rdisbanded the Clan!");
 		
+		Clan self = cp.getClan();
+		
+		cp.disbandClan();
+		
 		/*
 		 * EVENT HANDLING
 		 */
-		ClanDisbandEvent event = new ClanDisbandEvent(cp.getClan(), cp.getPlayer(), DisbandReason.NORMAL);
+		ClanDisbandEvent event = new ClanDisbandEvent(self, cp.getPlayer(), DisbandReason.NORMAL);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		
-		cp.disbandClan();
 	}
 
 	@Override
