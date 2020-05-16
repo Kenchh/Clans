@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
-import me.rey.core.events.customevents.damage.DamageEvent;
+import me.rey.core.events.customevents.combat.DamageEvent;
 
 public class CombatBaseRelation implements Listener {
 		

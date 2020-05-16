@@ -1,7 +1,6 @@
 package me.rey.clans.clans;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -14,8 +13,9 @@ import me.rey.clans.database.SQLManager;
 import me.rey.clans.enums.CommandType;
 import me.rey.clans.siege.Siege;
 import me.rey.clans.utils.Text;
+import me.rey.clans.utils.UtilFocus;
 import me.rey.core.Warriors;
-import me.rey.core.players.PlayerHitCache;
+import me.rey.core.players.combat.PlayerHitCache;
 
 public class ClansPlayer {
 	
@@ -189,6 +189,22 @@ public class ClansPlayer {
 	public boolean isInCombat() {
 		PlayerHitCache cache = Warriors.getInstance().getHitCache();
 		return cache.hasCombatTimer(this.getPlayer());
+	}
+	
+	public void unfocus() {
+		UtilFocus.focus(this.getPlayer(), null);
+	}
+	
+	public void focus(Player focus) {
+		UtilFocus.focus(this.getPlayer(), focus);
+	}
+	
+	public boolean hasFocus() {
+		return this.getFocus() != null;
+	}
+	
+	public Player getFocus() {
+		return UtilFocus.getFocus(this.getPlayer());
 	}
 
 }

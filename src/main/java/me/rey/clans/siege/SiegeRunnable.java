@@ -8,9 +8,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
-import me.rey.clans.packets.ActionBar;
-import me.rey.core.utils.Text;
 
+@SuppressWarnings("unused")
 public class SiegeRunnable extends BukkitRunnable {
 
 	private double intervalInSeconds = 0.1;
@@ -43,7 +42,9 @@ public class SiegeRunnable extends BukkitRunnable {
 				
 				ClansPlayer cp = new ClansPlayer(uuid);
 				if(!cp.isOnline()) continue;
-				new ActionBar(Text.color("&cSieged by &a" + sieging.getName() + String.format(" &c(&a%s&c)", timeRemaining))).send(cp.getPlayer());
+				
+//				NOT NEEDED
+//				new ActionBar(Text.color("&cSieged by &a" + sieging.getName() + String.format(" &c(&a%s&c)", timeRemaining))).send(cp.getPlayer());
 			}
 		}
 		// END
@@ -51,7 +52,6 @@ public class SiegeRunnable extends BukkitRunnable {
 		/*
 		 * NOT displaying action bar if the clan is SIEGING more than 1 clan
 		 */
-		
 		Clan newSieger = Main.getInstance().getSQLManager().getClan(sieging.getUniqueId());
 		if(newSieger.isBeingSieged()) return;
 		Iterator<Siege> iterator2 = newSieger.getClansSiegedBySelf().iterator();
@@ -60,7 +60,9 @@ public class SiegeRunnable extends BukkitRunnable {
 				
 				ClansPlayer cp = new ClansPlayer(uuid);
 				if(!cp.isOnline()) continue;
-				new ActionBar(Text.color("&cSieging &a" + sieged.getName() + String.format(" &c(&a%s&c)", timeRemaining))).send(cp.getPlayer());
+				
+//				NOT NEEDED
+//				new ActionBar(Text.color("&cSieging &a" + sieged.getName() + String.format(" &c(&a%s&c)", timeRemaining))).send(cp.getPlayer());
 			}
 		}
 		

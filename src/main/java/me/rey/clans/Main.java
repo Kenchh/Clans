@@ -16,9 +16,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.rey.clans.clans.Clan;
+import me.rey.clans.clans.WarriorsTeamHandler;
 import me.rey.clans.commands.AllyChat;
 import me.rey.clans.commands.ClanChat;
 import me.rey.clans.commands.ClansCommand;
+import me.rey.clans.commands.Focus;
 import me.rey.clans.commands.base.Base;
 import me.rey.clans.database.SQLManager;
 import me.rey.clans.events.ClaimProtection;
@@ -43,10 +45,11 @@ import me.rey.clans.items.crafting.marksman.MHelmet1;
 import me.rey.clans.items.crafting.marksman.MHelmet2;
 import me.rey.clans.items.crafting.marksman.MLeggings1;
 import me.rey.clans.items.crafting.marksman.MLeggings2;
-import me.rey.clans.packets.PlayerInfo;
+import me.rey.clans.playerdisplay.PlayerInfo;
 import me.rey.clans.shops.Shops;
 import me.rey.clans.siege.SiegeTriggerEvent;
 import me.rey.clans.utils.Text;
+import me.rey.clans.utils.UtilFocus;
 
 public class Main extends JavaPlugin {
 	
@@ -62,6 +65,8 @@ public class Main extends JavaPlugin {
 	public HashMap<Chunk, UUID> territory;
 	private ServerParser stp;
 	public static HashMap<UUID, HashMap<String, Object>> playerdata;
+	
+	private PlayerInfo info;
 
 	/*
 	 * Called on plugin enable
@@ -122,17 +127,24 @@ public class Main extends JavaPlugin {
 		/*
 		 * SCOREBOARD
 		 */
-		PlayerInfo info = new PlayerInfo();
+		info = new PlayerInfo();
+		pm.registerEvents(info, this);
+		for(Player online : Bukkit.getOnlinePlayers()) {
+			info.setupSidebar(online);
+		}
+		
+		/*
+		 * NAMETAGS
+		 */
 		new BukkitRunnable() {
-			
 			@Override
 			public void run() {
-				for(Player online : Bukkit.getOnlinePlayers()) {
-					info.updateScoreboard(online);
-				}
+				info.updateNameTagsForAll();
+				info.updateTabListForAll();
 			}
-			
-		}.runTaskTimer(this, 0, 4);
+		}.runTaskTimerAsynchronously(this, 0, 5);
+		
+		pm.registerEvents(new WarriorsTeamHandler(), this);
 	}
 	
 	
@@ -177,7 +189,8 @@ public class Main extends JavaPlugin {
 		this.commands = new ArrayList<ClansCommand>(Arrays.asList(
 				new Base(),
 				new ClanChat(),
-				new AllyChat()
+				new AllyChat(),
+				new Focus()
 				));
 	}
 	
@@ -197,6 +210,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new CombatBaseRelation(), this);
 		pm.registerEvents(new Shops(), this);
 		pm.registerEvents(new SiegeTriggerEvent(), this);
+		pm.registerEvents(new UtilFocus(), this);
 	}
 	
 	public void loadConfig() {
@@ -243,7 +257,7 @@ public class Main extends JavaPlugin {
 
 	public Clan getClan(UUID uuid) {
 		for(Clan c : clans) {
-			if(c.getUniqueId().equals(uuid)) {
+			if(c.getName().equals(uuid)) {
 				return c;
 			}
 		}

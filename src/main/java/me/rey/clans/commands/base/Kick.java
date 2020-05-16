@@ -1,5 +1,6 @@
 package me.rey.clans.commands.base;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -9,6 +10,7 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanKickEvent;
 import me.rey.clans.utils.ErrorCheck;
 
 public class Kick extends SubCommand {
@@ -58,6 +60,11 @@ public class Kick extends SubCommand {
 		toKick.announceToClan(format);
 		toK.sendMessageWithPrefix("Clan", "You were kicked from your clan by &s" + cp.getPlayer().getName() + "&r.");
 		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanKickEvent event = new ClanKickEvent(toKick, cp.getPlayer(), toK);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

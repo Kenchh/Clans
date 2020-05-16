@@ -2,15 +2,19 @@ package me.rey.clans.commands.base;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.rey.clans.Main;
+import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.clans.ServerClan;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanCreateEvent;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.Text;
 
@@ -66,9 +70,16 @@ public class Create extends SubCommand {
 			}
 		}
 		
-		this.sql().createClan(UUID.randomUUID(), name, ((Player) sender));
+		UUID uuid = UUID.randomUUID();
+		this.sql().createClan(uuid, name, ((Player) sender));
 		this.sendMessageWithPrefix("Clan", String.format("You have created Clan &s%s&r.", name));
 		
+		/*
+		 * EVENT HANDLING
+		 */
+		Clan self = Main.getInstance().getClan(uuid);
+		ClanCreateEvent event = new ClanCreateEvent(self, (Player) sender);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

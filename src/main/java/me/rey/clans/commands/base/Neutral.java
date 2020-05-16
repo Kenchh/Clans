@@ -1,10 +1,11 @@
 package me.rey.clans.commands.base;
 
-import me.rey.clans.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
@@ -12,12 +13,15 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanUpdateRelationEvent;
+import me.rey.clans.events.clans.ClanUpdateRelationEvent.RelationAction;
 import me.rey.clans.utils.ErrorCheck;
 
 public class Neutral extends SubCommand {
 
 	public Neutral() {
 		super("neutral", "Revoke a relation on a clan", "/c neutral <Clan>", ClansRank.ADMIN, CommandType.CLAN, true);
+		
 		this.addAlias("unally");
 	}
 
@@ -59,6 +63,12 @@ public class Neutral extends SubCommand {
 		
 		from.announceToClan("&sYou &rhave revoked your " + color + rName + " &rstatus with &s" + to.getName() + " &rClan!", cp);
 		to.announceToClan("&s" + from.getName() + " &rhas revoked their " + color + rName + " &rstatus with your Clan!", cp);
+		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanUpdateRelationEvent event = new ClanUpdateRelationEvent(cp.getClan(), to, cp.getPlayer(), RelationAction.NEUTRAL);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

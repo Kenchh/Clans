@@ -1,6 +1,5 @@
 package me.rey.clans.commands;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,6 +14,7 @@ import me.rey.clans.database.SQLManager;
 import me.rey.clans.enums.CommandType;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
+import me.rey.clans.utils.Text;
 import net.md_5.bungee.api.ChatColor;
 
 public abstract class SubCommand {
@@ -72,7 +72,7 @@ public abstract class SubCommand {
 		if((this.getChilds() != null && this.getChilds().length != 0) && args.length > 0) {
 			
 			for(SubCommand argument : this.getChilds()) {
-				if(argument.command().equalsIgnoreCase(args[0])) {
+				if(argument.command().equalsIgnoreCase(args[0]) || argument.hasAlias(args[0])) {
 					argument.run(source, sender, Arrays.copyOfRange(args, 1, args.length));
 					return;
 				}
@@ -131,8 +131,7 @@ public abstract class SubCommand {
 	}
 	
 	public void sendMessageWithPrefix(String prefix, String message) {
-		message = message.replaceAll("&r", "&7").replaceAll("&s", "&e");
-		sendMessage(String.format("&9%s> &7%s", prefix, message));
+		sendMessage(Text.format(prefix, message));
 	}
 	
 	public void sendMessage(String message) {
@@ -155,6 +154,7 @@ public abstract class SubCommand {
 	public void setStaff(boolean staff) {
 		this.isForStaff = staff;
 	}
+	
 
 	public void addAlias(String alias) {
 		if(aliases.contains(alias) == false) {

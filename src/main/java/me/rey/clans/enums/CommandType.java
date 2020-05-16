@@ -6,6 +6,7 @@ public enum CommandType {
 	
 	HELP(),
 	STAFF(),
+	FEATURE(),
 	CLAN();
 	
 	public String getName() {

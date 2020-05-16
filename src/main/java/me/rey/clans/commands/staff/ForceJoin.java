@@ -1,6 +1,8 @@
 package me.rey.clans.commands.staff;
 
 import me.rey.clans.Main;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -10,6 +12,8 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanJoinEvent;
+import me.rey.clans.events.clans.ClanJoinEvent.JoinReason;
 import me.rey.clans.utils.ErrorCheck;
 
 public class ForceJoin extends SubCommand {
@@ -42,6 +46,12 @@ public class ForceJoin extends SubCommand {
 		this.sql().saveClan(toJoin);
 		
 		toJoin.announceToClan("&s" + cp.getPlayer().getName() + " &rjoined your Clan!", cp);
+		
+		/*
+		 * EVENT HANDLING
+		 */
+		ClanJoinEvent event = new ClanJoinEvent(toJoin, cp.getPlayer(), JoinReason.FORCE);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

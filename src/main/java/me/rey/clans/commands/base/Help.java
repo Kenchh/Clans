@@ -1,5 +1,8 @@
 package me.rey.clans.commands.base;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -7,6 +10,7 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.AllyChat;
 import me.rey.clans.commands.ClanChat;
 import me.rey.clans.commands.ClansCommand;
+import me.rey.clans.commands.Focus;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
 import me.rey.clans.utils.Text;
@@ -31,16 +35,15 @@ public class Help extends SubCommand {
 					)));
 		}
 		
-		sender.sendMessage(Text.color(String.format("%s &7%s",
-					new AllyChat().usage(),
-					new AllyChat().description()
-					)));
 		
-		sender.sendMessage(Text.color(String.format("%s &7%s",
-					new ClanChat().usage(),
-					new ClanChat().description()
+		List<ClansCommand> extraCommands = Arrays.asList(new AllyChat(), new ClanChat(), new Focus());
+		extraCommands.forEach((cmd) -> {
+			ChatColor c = cmd.requiredRank().getColor();
+			sender.sendMessage(c + Text.color(String.format("%s &7%s",
+					cmd.usage(),
+					cmd.description()
 					)));
-		
+		});
 	}
 
 	@Override

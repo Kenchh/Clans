@@ -1,5 +1,9 @@
 package me.rey.clans.commands.base;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -15,9 +19,7 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import me.rey.clans.events.clans.ClanTerritoryClaimEvent;
 
 public class Claim extends SubCommand {
 
@@ -84,6 +86,12 @@ public class Claim extends SubCommand {
 			clan.addTerritory(standing);
 			this.sendMessageWithPrefix("Clan", "Successfully claimed chunk (&s" + standing.getX() + "&r, &e" + standing.getZ() + "&r).");
 			this.sql().saveClan(clan);
+			
+			/*
+			 * EVENT HANDLING
+			 */
+			ClanTerritoryClaimEvent event = new ClanTerritoryClaimEvent(clan, player, new ArrayList<Chunk>(Arrays.asList(standing)));
+			Bukkit.getServer().getPluginManager().callEvent(event);
 		} else {
 			this.sendMessageWithPrefix("Error", "You must claim next to your owned territory!");
 		}

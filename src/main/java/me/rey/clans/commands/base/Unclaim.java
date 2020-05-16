@@ -1,5 +1,9 @@
 package me.rey.clans.commands.base;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,6 +15,8 @@ import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.ClansCommand;
 import me.rey.clans.commands.SubCommand;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.events.clans.ClanTerritoryUnclaimEvent;
+import me.rey.clans.events.clans.ClanTerritoryUnclaimEvent.UnclaimReason;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
 import me.rey.clans.utils.Text;
@@ -34,6 +40,9 @@ public class Unclaim extends SubCommand {
 		ClansPlayer cp = new ClansPlayer(player);
 		Clan self = cp.getClan();
 		
+		// EVENT
+		ClanTerritoryUnclaimEvent event = null;
+		
 		if(args.length == 1 && args[0].equalsIgnoreCase("all")) {
 			if(self == null) {
 				ErrorCheck.noClan(sender);
@@ -50,9 +59,17 @@ public class Unclaim extends SubCommand {
 				return;
 			}
 			
+			/*
+			 * EVENT HANDLING
+			 */
+			event = new ClanTerritoryUnclaimEvent(self, player, self.getTerritory(), UnclaimReason.NORMAL, true);
+			Bukkit.getServer().getPluginManager().callEvent(event);
+			
+			
 			self.unclaimAll();
 			self.announceToClan("&s" + player.getName() + " &rhas &qUNCLAIMED &rall your land.");
 			this.sql().saveClan(self);
+			
 			return;
 		}
 		
@@ -75,6 +92,12 @@ public class Unclaim extends SubCommand {
 			String unclaimer = self == null ? "Player &s" + player.getName() : "Clan &s" + self.getName();
 			Text.announceToServer("Clan", unclaimer + " &rhas &4&lUNCLAIMED &ra from &s" + toUnclaim.getName()
 			+ "&r. (&s" + standing.getX() + "&r, &s" + standing.getZ() + "&r)");
+			
+			/*
+			 * EVENT HANDLING
+			 */
+			event = new ClanTerritoryUnclaimEvent(self, player, new ArrayList<Chunk>(Arrays.asList(standing)), UnclaimReason.FORCE, false);
+			Bukkit.getServer().getPluginManager().callEvent(event);
 			return;
 		}
 		
@@ -93,6 +116,11 @@ public class Unclaim extends SubCommand {
 		self.announceToClan("&s" + player.getName() + " &rhas &qunclaimed &ra piece of land. (&s" + standing.getX() + "&r, &s" + standing.getZ() + "&r)");
 		this.sql().saveClan(self);
 		
+		/*
+		 * EVENT HANDLING
+		 */
+		event = new ClanTerritoryUnclaimEvent(self, player, new ArrayList<Chunk>(Arrays.asList(standing)), UnclaimReason.NORMAL, false);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	@Override

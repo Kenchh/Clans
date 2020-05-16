@@ -1,5 +1,6 @@
 package me.rey.clans.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.command.Command;
@@ -29,6 +30,7 @@ public abstract class ClansCommand implements CommandExecutor {
 	private SQLManager sql = Main.getInstance().getSQLManager();
 	private CommandSender sender;
 	private boolean isForStaff;
+	private ArrayList<String> aliases = new ArrayList<String>();
 	
 	public ClansCommand(String command, String description, String usage, ClansRank requiredRank, CommandType commandType, boolean isPlayerExclusive) {
 		this.command = command;
@@ -145,5 +147,17 @@ public abstract class ClansCommand implements CommandExecutor {
 		this.isForStaff = staff;
 	}
 	
+	public void addAlias(String alias) {
+		if(aliases.contains(alias) == false) {
+			aliases.add(alias);
+		}
+	}
+
+	public boolean hasAlias(String alias) {
+		if(aliases.contains(alias)) {
+			return true;
+		}
+		return false;
+	}
 
 }

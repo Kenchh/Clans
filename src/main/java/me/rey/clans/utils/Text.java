@@ -15,7 +15,7 @@ public class Text {
 	
 	public static String format(String prefix, String message) {
 		message = Text.color(message);
-		prefix = Text.color(String.format("&9%s »&r", prefix));
+		prefix = Text.color(String.format("&9%s Â»&r", prefix));
 		return (prefix + " " + message);
 	}
 	
@@ -92,7 +92,7 @@ public class Text {
                 return false;
         }
         
-        String[] charrArray2 = {"á", "é", "í", "ó", "ú"};
+        String[] charrArray2 = {"ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½"};
         for(String s : charrArray2) {
         	if(str.contains(s))
         		return false;

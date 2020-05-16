@@ -3,8 +3,12 @@ package me.rey.clans.events;
 import java.util.Arrays;
 import java.util.List;
 
-import me.rey.clans.commands.base.Claim;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -24,18 +28,18 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.material.Door;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Openable;
 
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
+import me.rey.clans.commands.base.Claim;
 import me.rey.clans.events.custom.ContainerOpenEvent;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
-import org.bukkit.material.Door;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Openable;
-import org.bukkit.material.TrapDoor;
 
 public class ClaimProtection implements Listener {
 
@@ -70,42 +74,43 @@ public class ClaimProtection implements Listener {
 				Bukkit.getServer().getPluginManager().callEvent(event);
 				if(event.isAllowed())
 					return;
-			} else {
+			}
+
+			Clan found = this.isInOtherClaim(e.getPlayer(), clicked);
+			ErrorCheck.noPermissionInClaim(e.getPlayer(), found);
+			e.setCancelled(true);
+			return;
+		} else {
+
+			// IRON DOOR
+			if (clicked.getType().equals(Material.IRON_DOOR_BLOCK)) {
+				BlockState blockState = clicked.getState();
+				if(((Door) blockState.getData()).isTopHalf()){
+					blockState = clicked.getRelative(BlockFace.DOWN).getState();
+				}
+
+				Openable openable = (Openable) blockState.getData();
+				openable.setOpen(!openable.isOpen());
+				blockState.setData((MaterialData) openable);
+
+				blockState.update();
+				e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
 				return;
 			}
 
-			ErrorCheck.noPermissionInClaim(e.getPlayer(), this.isInOtherClaim(e.getPlayer(), clicked));
-			e.setCancelled(true);
-			return;
-		}
+			// IRON TRAP DOOR
+			if (clicked.getType().equals(Material.IRON_TRAPDOOR)) {
+				BlockState blockState = clicked.getState();
 
-		// IRON DOOR
-		if (clicked.getType().equals(Material.IRON_DOOR_BLOCK)) {
-			BlockState blockState = clicked.getState();
-			if(((Door) blockState.getData()).isTopHalf()){
-				blockState = clicked.getRelative(BlockFace.DOWN).getState();
+				Openable openable = (Openable) blockState.getData();
+				openable.setOpen(!openable.isOpen());
+				blockState.setData((MaterialData) openable);
+
+				blockState.update();
+				e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
+				return;
 			}
-
-			Openable openable = (Openable) blockState.getData();
-			openable.setOpen(!openable.isOpen());
-			blockState.setData((MaterialData) openable);
-
-			blockState.update();
-			e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
-			return;
-		}
-
-		// IRON TRAP DOOR
-		if (clicked.getType().equals(Material.IRON_TRAPDOOR)) {
-			BlockState blockState = clicked.getState();
-
-			Openable openable = (Openable) blockState.getData();
-			openable.setOpen(!openable.isOpen());
-			blockState.setData((MaterialData) openable);
-
-			blockState.update();
-			e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.DOOR_OPEN, 5L, 1F);
-			return;
+			
 		}
 	}
 

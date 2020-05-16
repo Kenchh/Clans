@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import me.rey.clans.packets.PlayerInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -25,6 +24,7 @@ import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.clans.ServerClan;
+import me.rey.clans.playerdisplay.PlayerInfo;
 
 public class SQLManager {
 	
@@ -367,9 +367,11 @@ public class SQLManager {
 		
 		if(!existsInEnergy)
 			Main.clans.add(getClan(uuid));
-
-		PlayerInfo.updateNameTagsForAll();
-
+		
+		
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+		
 		return true;
 	}
 	
@@ -382,7 +384,7 @@ public class SQLManager {
 		Connection conn = null;
 		PreparedStatement ps = null, insert = null;
 		ResultSet res = null;
-
+		
 		try {
 			conn = pool.getConnection();
 			
@@ -391,12 +393,12 @@ public class SQLManager {
 			
 			ps.setString(1, clan.getName());
 			res = ps.executeQuery();
-
+			
 			res.next();
 			if(!clanExists(clan.getName())) {
 				createClan(clan.getUniqueId(), clan.getName(), null);
 			}
-
+			
 			UUID uuid = clan.getUniqueId();
 			String home = clan.getHome() == null ? null : "";
 
@@ -405,7 +407,7 @@ public class SQLManager {
 			 */
 			if(clan.getHome() != null)
 				home+= clan.getHome().getBlockX() + ";" + clan.getHome().getBlockY() +  ";" + clan.getHome().getBlockZ();
-
+			
 			/*
 			 * MEMBERS
 			 */
@@ -416,11 +418,11 @@ public class SQLManager {
 				
 				ArrayList<String> membersUUID = members.get(rank.getId()) == null ? new ArrayList<>() : members.get(rank.getId());
 				membersUUID.add(m.getUniqueId().toString());
-
+				
 				members.put(rank.getId(), membersUUID);
 				this.setPlayerData(m.getUniqueId(), "clan", clan.getUniqueId().toString());
 			}
-
+			
 			/*
 			 * TERRITORY
 			 */
@@ -438,7 +440,7 @@ public class SQLManager {
 			for(UUID related : clan.getRelations().keySet()) {
 				ClanRelations relation = clan.getClanRelation(related);
 				if(!relation.shouldSave()) continue;
-
+				
 				ArrayList<String> clansUUID = relations.get(relation.getId()) == null ? new ArrayList<>() : relations.get(relation.getId());
 				clansUUID.add(related.toString());
 				
@@ -460,7 +462,7 @@ public class SQLManager {
 					warpoints.put("negative", negative);
 				}
 			}
-
+			
 			this.setClanData(uuid, "name", clan.getName());
 			this.setClanData(uuid, "founder", clan.getFounder());
 			this.setClanData(uuid, "energy", clan.getEnergy());
@@ -470,8 +472,6 @@ public class SQLManager {
 			this.setClanData(uuid, "relations", new JSONObject(relations).toJSONString());
 			this.setClanData(uuid, "warpoints", new JSONObject(warpoints).toJSONString());
 
-			PlayerInfo.updateNameTagsForAll();
-
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -479,7 +479,11 @@ public class SQLManager {
 			pool.close(conn, ps, res);
 			pool.close(null, insert, null);
 		}
-
+		
+		
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+		
 		return false;
 	}
 
@@ -767,12 +771,14 @@ public class SQLManager {
 
 			for(UUID uR : clan.getRelations().keySet()) {
 				Clan related = Main.getInstance().getClan(uR);
+				if(related == null || related.compare(clan)) continue;
 				related.removeRelation(clan.getUniqueId());
 				saveClan(related);
 			}
 
 			for(UUID uR : clan.getWarpoints().keySet()) {
 				Clan enemy = Main.getInstance().getClan(uR);
+				if(enemy == null || enemy.compare(clan)) continue;
 				enemy.setWarpoint(clan.getUniqueId(), 0);
 				saveClan(enemy);
 			}
@@ -783,8 +789,9 @@ public class SQLManager {
 			pool.close(conn, ps, null);
 		}
 
-		PlayerInfo.updateNameTagsForAll();
-
+		PlayerInfo info = new PlayerInfo();
+		info.updateNameTagsForAll();
+		
 	}
 	
 	public void setClanData(UUID uuid, String column, Object data) {
