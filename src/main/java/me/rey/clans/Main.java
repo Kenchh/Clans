@@ -257,7 +257,7 @@ public class Main extends JavaPlugin {
 
 	public Clan getClan(UUID uuid) {
 		for(Clan c : clans) {
-			if(c.getUniqueId().equals(uuid)) {
+			if(c.getName().equals(uuid)) {
 				return c;
 			}
 		}
@@ -266,7 +266,7 @@ public class Main extends JavaPlugin {
 
 	public Clan getClan(String name) {
 		for(Clan c : clans) {
-			if(c.getName().equals(name)) {
+			if(c.getName().equalsIgnoreCase(name)) {
 				return c;
 			}
 		}
