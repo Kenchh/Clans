@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.rey.clans.clans.Clan;
+import me.rey.clans.clans.WarriorsTeamHandler;
 import me.rey.clans.commands.AllyChat;
 import me.rey.clans.commands.ClanChat;
 import me.rey.clans.commands.ClansCommand;
@@ -143,6 +144,7 @@ public class Main extends JavaPlugin {
 			}
 		}.runTaskTimerAsynchronously(this, 0, 5);
 		
+		pm.registerEvents(new WarriorsTeamHandler(), this);
 	}
 	
 	
