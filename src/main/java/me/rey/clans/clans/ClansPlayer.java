@@ -155,6 +155,7 @@ public class ClansPlayer {
 			return null;
 		}
 		if(uuid == null) return null;
+		
 		Clan toGive = Main.getInstance().getClan(UUID.fromString(uuid));
 		return toGive;
 	}
