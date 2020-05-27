@@ -2,12 +2,16 @@ package me.rey.clans.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import com.reinforced.WorldEvents;
 
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.core.events.customevents.combat.DamageEvent;
+import me.rey.core.events.customevents.combat.FinalEntityDamageEvent;
 
 public class CombatBaseRelation implements Listener {
 		
@@ -27,6 +31,12 @@ public class CombatBaseRelation implements Listener {
 		
 		e.setCancelled(true);
 		cp.sendMessageWithPrefix("Combat", "You cannot hit " + relation.getPlayerColor() + damaged.getPlayer().getName() + "&r.");
+	}
+	
+	@EventHandler (priority = EventPriority.HIGHEST)
+	public void onHitCustomMob(FinalEntityDamageEvent e) {
+		WorldEvents.getInstance().isCustomEntity(e.getDamagee());
+		e.addMult(0);
 	}
 
 }

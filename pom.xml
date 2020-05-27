@@ -76,6 +76,14 @@
 	</dependency>
 	
 		<dependency>
+  		<groupId>com.reinforced</groupId>
+  		<artifactId>WorldEvents</artifactId>
+  		<version>1.0.0</version>
+	    <scope>system</scope>
+	    <systemPath>${project.basedir}/libs/WorldEvents.jar</systemPath>
+	</dependency>
+	
+	<dependency>
   		<groupId>me.rey.parser</groupId>
   		<artifactId>Parser</artifactId>
   		<version>1.0.0</version>
