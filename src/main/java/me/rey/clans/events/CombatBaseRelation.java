@@ -32,11 +32,4 @@ public class CombatBaseRelation implements Listener {
 		e.setCancelled(true);
 		cp.sendMessageWithPrefix("Combat", "You cannot hit " + relation.getPlayerColor() + damaged.getPlayer().getName() + "&r.");
 	}
-	
-	@EventHandler (priority = EventPriority.HIGHEST)
-	public void onHitCustomMob(FinalEntityDamageEvent e) {
-		WorldEvents.getInstance().isCustomEntity(e.getDamagee());
-		e.addMult(0);
-	}
-
 }

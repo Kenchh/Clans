@@ -3,17 +3,22 @@ package me.rey.clans;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.reinforced.WorldEvents;
+import com.reinforced.bosses.Boss;
 
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.WarriorsTeamHandler;
@@ -145,6 +150,12 @@ public class Main extends JavaPlugin {
 		}.runTaskTimerAsynchronously(this, 0, 5);
 		
 		pm.registerEvents(new WarriorsTeamHandler(), this);
+		
+		/*
+		 * WORLD EVENTS
+		 */
+		Boss IronWizard = new Boss("Iron Wizard", 100, IronGolem.class, new HashSet<>());
+		WorldEvents.getInstance().getEventManager().registerEvent(IronWizard);
 	}
 	
 	
