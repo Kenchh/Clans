@@ -2,16 +2,12 @@ package me.rey.clans.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-
-import com.reinforced.WorldEvents;
 
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.core.events.customevents.combat.DamageEvent;
-import me.rey.core.events.customevents.combat.FinalEntityDamageEvent;
 
 public class CombatBaseRelation implements Listener {
 		
