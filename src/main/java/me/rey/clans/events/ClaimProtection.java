@@ -37,7 +37,10 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.base.Claim;
+import me.rey.clans.events.clans.PlayerEditClaimEvent;
+import me.rey.clans.events.clans.PlayerEditClaimEvent.ClaimPermission;
 import me.rey.clans.events.custom.ContainerOpenEvent;
+import me.rey.clans.gui.Gui.Item;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
 
@@ -50,9 +53,9 @@ public class ClaimProtection implements Listener {
 	 * EnchantItemEvent - PrepareItemEnchantEvent - PlayerFishEvent
 	 */
 	
-	List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER, Material.ANVIL);
+	static List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER, Material.ANVIL);
 
-	List<Material> interactables = Arrays.asList(
+	static List<Material> interactables = Arrays.asList(
 			/* Fence Gates */ 	Material.FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.BIRCH_FENCE_GATE, Material.DARK_OAK_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.SPRUCE_FENCE_GATE,
 			/* Doors */ 		Material.WOODEN_DOOR, Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR, Material.JUNGLE_DOOR, Material.SPRUCE_DOOR,
 			/* Etc. */			Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.TRAP_DOOR, Material.LEVER,
@@ -77,9 +80,17 @@ public class ClaimProtection implements Listener {
 			}
 
 			Clan found = this.isInOtherClaim(e.getPlayer(), clicked);
+
+			PlayerEditClaimEvent event = new PlayerEditClaimEvent(found, e.getPlayer(), ClaimPermission.DENY, new Item(e.getPlayer().getItemInHand()), e.getClickedBlock());
+			Bukkit.getServer().getPluginManager().callEvent(event);
+			
+			if(event.getPermission().equals(ClaimPermission.ALLOW))
+				return;
+			
 			ErrorCheck.noPermissionInClaim(e.getPlayer(), found);
 			e.setCancelled(true);
 			return;
+			
 		} else {
 
 			// IRON DOOR

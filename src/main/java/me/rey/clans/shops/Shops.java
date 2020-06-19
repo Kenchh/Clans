@@ -14,6 +14,7 @@ import me.rey.core.events.customevents.ability.AbilityUseEvent;
 import me.rey.core.events.customevents.combat.CombatTimerEndEvent;
 import me.rey.core.events.customevents.combat.CombatTimerTickEvent;
 import me.rey.core.events.customevents.combat.DamageEvent;
+import me.rey.core.players.combat.CombatTimer;
 
 public class Shops implements Listener {
 	

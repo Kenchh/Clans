@@ -106,7 +106,7 @@ public class Clan {
 		for(UUID uuid : this.getRelations().keySet()) {
 			if(this.getClanRelation(uuid).getId() != r.getId()) continue;
 			
-			Clan related = Main.getInstance().getSQLManager().getClan(uuid);
+			Clan related = Main.getInstance().getClan(uuid);
 			
 			for(ClansPlayer toShout : related.getOnlinePlayers().keySet()) {
 				toShout.getPlayer().sendMessage(text);

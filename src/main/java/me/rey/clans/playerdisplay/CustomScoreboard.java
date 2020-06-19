@@ -16,6 +16,8 @@ import me.rey.core.utils.Text;
 
 public class CustomScoreboard {
 	
+	private static final int MAX_LINES = 15;
+	
 	private BukkitTask task;
 	private Player bound;
 	private Scoreboard sb;
@@ -36,7 +38,7 @@ public class CustomScoreboard {
         obj.setDisplayName(Text.color(title));
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         
-        for(int i = 0; i < 15; i++) sb.registerNewTeam("team" + (i+1));
+        for(int i = 0; i < MAX_LINES; i++) sb.registerNewTeam("team" + (i+1));
         
         if(extraTitles != null && extraTitles.length > 0)
         	for(String s : extraTitles) this.addTitle(s);
@@ -98,7 +100,7 @@ public class CustomScoreboard {
 	}
 	
 	public CustomScoreboard addLine(String text) {
-		if(lines.length >= 15) return this;
+		if(lines.length >= MAX_LINES) return this;
 		lines[lines.length] = Text.color(text);
 		return this;
 	}
@@ -120,19 +122,18 @@ public class CustomScoreboard {
 		int count = 0;
 		for(int i = 0; i < this.getLines().length; i++) {
 			if(this.getLines()[i] == null) {
-				if(getEntryFromScore(obj, 15-i) != null) scoreboard.resetScores(getEntryFromScore(obj, 15-i));
+				if(getEntryFromScore(obj, MAX_LINES-i) != null) scoreboard.resetScores(getEntryFromScore(obj, MAX_LINES-i));
 				continue;
 			}
 			
-			if(i > 10) System.out.println(i);
  			String line = this.getLines()[i];;
- 			int score = 15-i;
+ 			int score = MAX_LINES-i;
 			if(line.equals("")) {
 				line = ChatColor.values()[count].toString();
 				count++;
 			}
 			
-			Team team = scoreboard.getTeam("team" + Math.min(15, i+1));
+			Team team = scoreboard.getTeam("team" + Math.min(MAX_LINES, i+1));
 			
 			String[] allChars = new String[3];
 			allChars[1] = line;

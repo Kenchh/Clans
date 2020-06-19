@@ -12,6 +12,7 @@ import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.enums.CommandType;
+import me.rey.clans.siege.bombs.CustomExplosion;
 
 public class ClanChat extends ClansCommand {
 	
@@ -28,6 +29,13 @@ public class ClanChat extends ClansCommand {
 		if(args.length == 0) {
 			boolean success = inChat.contains(p.getUniqueId()) ? inChat.remove(p.getUniqueId()) : inChat.add(p.getUniqueId());
 			if(success) this.sendMessageWithPrefix("Chat", "Clan Chat: " + (inChat.contains(p.getUniqueId()) ? "&aEnabled" : "&cDisabled"));
+			
+			/*
+			 *  ASDSADASDSADSAAAAAAAAAAAAADSADDSADADASDAS
+			 */
+			p.getWorld().dropItem(p.getLocation(), CustomExplosion.BOMB.getItem().get());
+			p.getWorld().dropItem(p.getLocation(), CustomExplosion.C4.getItem().get());
+			
 			return;
 		}
 		
@@ -40,6 +48,7 @@ public class ClanChat extends ClansCommand {
 		ClanRelations r = self.getClanRelation(self.getUniqueId());
 		
 		self.shoutToRelation(r, p, str.toString().trim());
+		
 	}
 
 	@Override

@@ -17,9 +17,13 @@ import me.rey.clans.clans.ClanRelations;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.packets.Nametag;
 import me.rey.clans.utils.UtilFocus;
+import me.rey.core.Warriors;
+import me.rey.core.players.User;
+import me.rey.core.players.combat.PlayerHitCache;
 
 public class PlayerInfo implements Listener {
 	
+	private PlayerHitCache cache = Warriors.getInstance().getHitCache();
 	private HashMap<Player, CustomScoreboard> scoreboardCache = new HashMap<>();
 	
 	final String[] scoreboardTitles = {
@@ -61,61 +65,78 @@ public class PlayerInfo implements Listener {
     	scoreboardCache.get(p).init();
     }
     
-    @EventHandler
+    @SuppressWarnings("unused")
+	@EventHandler
     public void updateScoreboard(UpdateScoreboardEvent e) {
     	ClansPlayer cp = new ClansPlayer(e.getScoreboard().getBound());
     	Chunk standing = e.getScoreboard().getBound().getLocation().getChunk();
     	boolean hasClan = cp.getRealClan() != null;
+    	Clan c = cp.getRealClan();
 
-    	String clan = hasClan ? cp.getRealClan().getName() : "None";
-    	String online = hasClan ? cp.getRealClan().getOnlinePlayers(false).size() + "/" + cp.getRealClan().getPlayers(false).size() : "N/A";
-    	String energy = hasClan ? cp.getRealClan().getEnergyString() : "N/A";
+    	String clan = hasClan ? c.getName() : "None", mimicClan = cp.getFakeClan() == null ? "" : " &c(" + cp.getFakeClan().getName() + ")";
+    	String online = hasClan ? c.getOnlinePlayers(false).size() + "/" + c.getPlayers(false).size() : "N/A";
+    	String energy = hasClan ? c.getEnergyString() : "N/A";
+    	String home = hasClan && c.getHome() != null ? String.format("(%s, %s, %s)",
+    			c.getHome().getBlockX(),
+    			c.getHome().getBlockY(),
+    			c.getHome().getBlockZ()
+    			) : "&fN/A";
+    	
     	String gold = Integer.toString(cp.getGold());
     	
     	String territory = Main.getInstance().getClanFromTerritory(standing) == null ? ChatColor.GRAY.toString() + "Wilderness" : 
-    		(!hasClan ? ClanRelations.NEUTRAL.getPlayerColor().toString() : cp.getRealClan().getClanRelation(Main.getInstance().getClanFromTerritory(standing)
+    		(!hasClan ? ClanRelations.NEUTRAL.getPlayerColor().toString() : c.getClanRelation(Main.getInstance().getClanFromTerritory(standing)
     				.getUniqueId()).getPlayerColor().toString()) + Main.getInstance().getClanFromTerritory(standing).getName();
     	territory = cp.isInSafeZone() ? String.format("&f(%s&f) %s", cp.isInCombat() ? ChatColor.RED.toString() + "UNSAFE" :
     		ChatColor.AQUA.toString() + "SAFE", ChatColor.stripColor(territory)) : territory;
     	
+    	
+    	// String.format("%.1f", cache.getCombatTimer(u.getPlayer()).getRemaining(System.currentTimeMillis())) + " Seconds"
+    	User u = new User(cp.getPlayer());
+    	String combat = "&f(" + (u.isInCombat()
+    			? "&cUNSAFE"
+    			: "&aSAFE") + "&f)";
+    	
+    	
+//    			"&eOnline &f" + online,
+//    			"&eHome &a" + home,
     	String[] lines = {
+    			"&a" + Main.NAME + " " + Main.VERSION,
+    			String.format("&aPlayers Online: %s/%s", Bukkit.getOnlinePlayers().size(), Bukkit.getMaxPlayers()),
     			"",
-    			"&eClan &f" + clan,
-    			"&eOnline &f" + online,
+    			"&eClan &f" + clan + mimicClan,
+    			"&eEnergy &f" + energy, 
     			"&eGold &f" + gold,
-    			"&eEnergy &f" + energy,
+    			"&eCombat &f" + combat,
     			"",
     			(Main.getInstance().getClanFromTerritory(standing) != null && Main.getInstance().getClanFromTerritory(standing).isServerClan() ? "&f" : "") + territory,
     			"",
+    			null, // Event (x, z)
+    			null, // EVENT NAME
     			null,
-    			null,
-    			null,
-    			null,
-    			null,
-    			null,
-    			null
+    			null, // Sieged (clan)
+    			null // TIME
     	};
     
     	
     	/*
     	 * SIEGES
     	 */
-    	if(hasClan && (cp.getRealClan().isBeingSieged() || cp.getRealClan().isSiegingOther())) {
+    	if(hasClan && (c.isBeingSieged() || c.isSiegingOther())) {
     		String action, timeLeft, clanActing;
     		
-    		if(cp.getRealClan().isBeingSieged()) {
+    		if(c.isBeingSieged()) {
     			action = "Sieged";
-    			timeLeft = cp.getRealClan().getClansSiegingSelf().get(0).getRemainingString(System.currentTimeMillis());
-    			clanActing = cp.getRealClan().getClansSiegingSelf().get(0).getClanSieging().getName();
+    			timeLeft = c.getClansSiegingSelf().get(0).getRemainingString(System.currentTimeMillis());
+    			clanActing = c.getClansSiegingSelf().get(0).getClanSieging().getName();
     		} else {
     			action = "Sieging";
-    			timeLeft = cp.getRealClan().getClansSiegedBySelf().get(0).getRemainingString(System.currentTimeMillis());
-    			clanActing = cp.getRealClan().getClansSiegedBySelf().get(0).getClanSieged().getName();
+    			timeLeft = c.getClansSiegedBySelf().get(0).getRemainingString(System.currentTimeMillis());
+    			clanActing = c.getClansSiegedBySelf().get(0).getClanSieged().getName();
     		}
 
-    		lines[8] = "&d&l" + action + " " + String.format("&f(%s&f)", ChatColor.RED + clanActing);
-			lines[9] = "&f" + timeLeft;
-			lines[10] = "";
+    		lines[13] = "&d&l" + action + " " + String.format("&f(%s&f)", ChatColor.RED + clanActing);
+			lines[14] = "&f" + timeLeft;
     	}
     	
     	e.getScoreboard().setLines(lines);
@@ -128,10 +149,6 @@ public class PlayerInfo implements Listener {
     		this.scoreboardCache.remove(e.getPlayer());
     	}
     }
-    
-    // END
-
-    
     
     /*
      * NAME TAGS

@@ -48,11 +48,17 @@ import me.rey.clans.items.crafting.marksman.MLeggings2;
 import me.rey.clans.playerdisplay.PlayerInfo;
 import me.rey.clans.shops.Shops;
 import me.rey.clans.siege.SiegeTriggerEvent;
+import me.rey.clans.siege.bombs.Bomb;
+import me.rey.clans.siege.bombs.Bomb2;
+import me.rey.clans.siege.bombs.CustomExplosion;
 import me.rey.clans.utils.Text;
 import me.rey.clans.utils.UtilFocus;
 import me.rey.clans.worldevents.ClansEvents;
 
 public class Main extends JavaPlugin {
+	
+	public static String NAME = "Reinforced";
+	public static String VERSION = "Alpha 1.0";
 	
 	Plugin plugin;
 	PluginManager pm = Bukkit.getPluginManager();
@@ -153,6 +159,12 @@ public class Main extends JavaPlugin {
 		ClansEvents worldEvents = new ClansEvents();
 		worldEvents.register();
 		pm.registerEvents(worldEvents, this);
+		
+		/*
+		 * TNT
+		 */
+		CustomExplosion.BOMB = new Bomb();
+		CustomExplosion.C4 = new Bomb2();
 	}
 	
 	
@@ -161,7 +173,6 @@ public class Main extends JavaPlugin {
 	 * Called on plugin disable
 	 */
 	public void onDisable() {
-		
 		this.plugin = null;
 		
 		sql.onDisable();

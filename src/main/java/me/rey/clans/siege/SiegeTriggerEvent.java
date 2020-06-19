@@ -11,7 +11,10 @@ import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.events.clans.ClanWarpointEvent;
+import me.rey.clans.events.clans.PlayerEditClaimEvent;
+import me.rey.clans.events.clans.PlayerEditClaimEvent.ClaimPermission;
 import me.rey.clans.events.custom.ContainerOpenEvent;
+import me.rey.clans.siege.bombs.CustomExplosion.Explodable;
 
 public class SiegeTriggerEvent implements Listener {
 	
@@ -37,15 +40,14 @@ public class SiegeTriggerEvent implements Listener {
 		
 		e.setAllowed(true);
 	}
-	
 
-	private Clan isInOtherClaim(Player player, Block block) {
+	private static Clan isInOtherClaim(Player player, Block block) {
 		Clan owner = Main.getInstance().getClanFromTerritory(block.getChunk());
 		ClansPlayer self = new ClansPlayer(player);
 		return owner == null ? null : (self.hasClan() && self.getClan().compare(owner) ? null : owner);
 	}
 	
-	public boolean isInSiegerTerritory(Player player, Block block) {
+	public static boolean isInSiegerTerritory(Player player, Block block) {
 		if(!(new ClansPlayer(player).hasClan())) return false;
 		if(isInOtherClaim(player, block) == null) return false;
 		
