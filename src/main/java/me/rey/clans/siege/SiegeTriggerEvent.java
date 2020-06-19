@@ -10,11 +10,12 @@ import org.bukkit.event.Listener;
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
+import me.rey.clans.events.ClaimProtection;
 import me.rey.clans.events.clans.ClanWarpointEvent;
 import me.rey.clans.events.clans.PlayerEditClaimEvent;
 import me.rey.clans.events.clans.PlayerEditClaimEvent.ClaimPermission;
+import me.rey.clans.events.clans.PlayerEditClaimEvent.EditAction;
 import me.rey.clans.events.custom.ContainerOpenEvent;
-import me.rey.clans.siege.bombs.CustomExplosion.Explodable;
 
 public class SiegeTriggerEvent implements Listener {
 	
@@ -32,6 +33,7 @@ public class SiegeTriggerEvent implements Listener {
 		sieged.setWarpoint(sieger.getUniqueId(), 0);
 		Main.getInstance().getSQLManager().saveClan(sieger); // saving SIEGER
 		Main.getInstance().getSQLManager().saveClan(sieged); // saving SIEGED
+	
 	}
 	
 	@EventHandler
@@ -39,6 +41,15 @@ public class SiegeTriggerEvent implements Listener {
 		if(!isInSiegerTerritory(e.getPlayer(), e.getContainer())) return;
 		
 		e.setAllowed(true);
+	}
+	
+	@EventHandler
+	public void onEditClaim(PlayerEditClaimEvent e) {
+		if(!e.getAction().equals(EditAction.BREAK)) return;
+		if(!isInSiegerTerritory(e.getPlayer(), e.getBlockToReplace())) return;
+		if(!ClaimProtection.containers.contains(e.getBlockToReplace().getType())) return;
+		
+		e.setPermission(ClaimPermission.ALLOW);
 	}
 
 	private static Clan isInOtherClaim(Player player, Block block) {

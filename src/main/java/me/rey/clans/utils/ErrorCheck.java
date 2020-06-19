@@ -68,7 +68,7 @@ public class ErrorCheck {
 	}
 	
 	public static boolean noPermissions(CommandSender sender, UserRank rank) {
-		sender.sendMessage(Text.format("Error", "You do not have permissions for [" + rank.getColor() + Text.formatName(rank.getName()) + "+&r]."));
+		sender.sendMessage(Text.format("Permission", "You do not have permission to run this command."));
 		return true;
 	}
 	

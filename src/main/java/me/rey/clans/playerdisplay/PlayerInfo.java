@@ -97,12 +97,10 @@ public class PlayerInfo implements Listener {
     			? "&cUNSAFE"
     			: "&aSAFE") + "&f)";
     	
-    	
-//    			"&eOnline &f" + online,
+    	//    			"&eOnline &f" + online,
 //    			"&eHome &a" + home,
     	String[] lines = {
-    			"&a" + Main.NAME + " " + Main.VERSION,
-    			String.format("&aPlayers Online: %s/%s", Bukkit.getOnlinePlayers().size(), Bukkit.getMaxPlayers()),
+    			String.format("&3Online: %s/%s", Bukkit.getOnlinePlayers().size(), Bukkit.getMaxPlayers()),
     			"",
     			"&eClan &f" + clan + mimicClan,
     			"&eEnergy &f" + energy, 
@@ -115,7 +113,8 @@ public class PlayerInfo implements Listener {
     			null, // EVENT NAME
     			null,
     			null, // Sieged (clan)
-    			null // TIME
+    			null, // TIME
+    			null
     	};
     
     	

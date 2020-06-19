@@ -31,8 +31,10 @@ import org.bukkit.util.Vector;
 import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
+import me.rey.clans.events.ClaimProtection;
 import me.rey.clans.events.clans.PlayerEditClaimEvent;
 import me.rey.clans.events.clans.PlayerEditClaimEvent.ClaimPermission;
+import me.rey.clans.events.clans.PlayerEditClaimEvent.EditAction;
 import me.rey.clans.items.Placeable;
 import me.rey.clans.siege.Siege;
 import me.rey.clans.siege.SiegeTriggerEvent;
@@ -74,7 +76,6 @@ public class CustomExplosion implements Listener {
 
 	@SuppressWarnings("deprecation")
 	public void blow(Clan clan, Player placer, Location location, Block[] toRemove) {
-		if (Explodable.isInSiegerTerritory(clan, location) == null) return;
 		
 		for (Block b : toRemove)
 			b.setType(Material.AIR);
@@ -110,7 +111,7 @@ public class CustomExplosion implements Listener {
 		new SoundEffect(Sound.EXPLODE, 2F).play(location);
 		
 		HashMap<UUID, Explodable> active = CustomExplosion.getActiveBombs(clan);
-		active.remove(Explodable.isInSiegerTerritory(clan, location).getUniqueId());
+		active.remove(Explodable.isInSiegerTerritory(clan, placer, location).getUniqueId());
 		if(!active.isEmpty())
 			CustomExplosion.ACTIVE_BOMBS.put(clan.getUniqueId(), active);
 		else
@@ -180,7 +181,7 @@ public class CustomExplosion implements Listener {
 				return;
 			}
 			
-			if(isInSiegerTerritory(cp.getClan(), location) == null) {
+			if(isInSiegerTerritory(cp.getClan(), player, location) == null && ClaimProtection.isNearOtherClaim(player, location.getBlock()) == null) {
 				cp.sendMessageWithPrefix("Siege", "You can only place TNT in territories from clans you're sieging!");
 				return;
 			}
@@ -190,30 +191,31 @@ public class CustomExplosion implements Listener {
 			
 			this.start(player, location);
 			HashMap<UUID, Explodable> active = CustomExplosion.getActiveBombs(cp.getClan());
-			active.put(isInSiegerTerritory(cp.getClan(), location).getUniqueId(), this);
+			active.put(isInSiegerTerritory(cp.getClan(), player, location).getUniqueId(), this);
 			CustomExplosion.ACTIVE_BOMBS.put(cp.getClan().getUniqueId(), active);
 			
 		}
 
-		public static Clan isInSiegerTerritory(Clan sieger, Location location) {
+		public static Clan isInSiegerTerritory(Clan sieger, Player p, Location location) {
 			
 			Clan clan = Main.getInstance().getClanFromTerritory(location.getChunk());
-			if(clan == null) return null;
+			if(clan == null && ClaimProtection.isNearOtherClaim(p, location.getBlock()) == null) return null;
 			
 			for (Siege siege : sieger.getClansSiegedBySelf())
 				if (siege.getClanSieged().compare(clan))
 					return siege.getClanSieged();
 			
-			return null;
+			return ClaimProtection.isNearOtherClaim(p, location.getBlock());
 		}
 		
 		
 		@EventHandler
 		public void onEditClaim(PlayerEditClaimEvent e) {
+			if(!e.getAction().equals(EditAction.PLACE)) return;
 			if(!SiegeTriggerEvent.isInSiegerTerritory(e.getPlayer(), e.getBlockToReplace())) return;
 			
-			String name = e.getItemInHand() != null && e.getItemInHand().get().hasItemMeta() && e.getItemInHand().get().getItemMeta().hasDisplayName()
-					? e.getItemInHand().get().getItemMeta().getDisplayName() 
+			String name = e.getItemInHand() != null && e.getItemInHand().hasItemMeta() && e.getItemInHand().getItemMeta().hasDisplayName()
+					? e.getItemInHand().getItemMeta().getDisplayName() 
 					: "N/A";
 			if(!getItem().getName().equals(name)) return;
 			

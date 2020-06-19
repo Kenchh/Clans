@@ -4,20 +4,22 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 import me.rey.clans.clans.Clan;
-import me.rey.clans.gui.Gui.Item;
 
 public class PlayerEditClaimEvent extends Event {
 
 	private ClaimPermission permission;
+	private EditAction action;
 	private Clan ownsTerritory;
-	private Item hand;
+	private ItemStack hand;
 	private Block block;
 	private Player player;
 	
-	public PlayerEditClaimEvent(Clan ownsTerritory, Player issuer, ClaimPermission permission, Item blockInhand, Block toReplace) {
+	public PlayerEditClaimEvent(Clan ownsTerritory, Player issuer, ClaimPermission permission, EditAction action, ItemStack blockInhand, Block toReplace) {
 		
+		this.action = action;
 		this.player = issuer;
 		this.ownsTerritory = ownsTerritory;
 		this.permission = permission;
@@ -36,6 +38,10 @@ public class PlayerEditClaimEvent extends Event {
 		return HANDLERS;
 	}
 	
+	public EditAction getAction() {
+		return action;
+	}
+	
 	public Player getPlayer() {
 		return player;
 	}
@@ -44,7 +50,7 @@ public class PlayerEditClaimEvent extends Event {
 		return block;
 	}
 	
-	public Item getItemInHand() {
+	public ItemStack getItemInHand() {
 		return hand;
 	}
 	
@@ -62,6 +68,10 @@ public class PlayerEditClaimEvent extends Event {
 	
 	public static enum ClaimPermission {
 		ALLOW, DENY;
+	}
+	
+	public static enum EditAction {
+		PLACE, BREAK;
 	}
 
 }
