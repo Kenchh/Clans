@@ -2,6 +2,7 @@ package me.rey.clans.events;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -62,8 +63,22 @@ public class ClaimProtection implements Listener {
 			/* Redstone */		Material.REDSTONE_COMPARATOR, Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF, Material.DIODE, Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
 			/* Press. Plates */	Material.WOOD_PLATE, Material.STONE_PLATE, Material.IRON_PLATE, Material.GOLD_PLATE);
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
+		
+		for(Set<Block> set : Claim.fakeBlocks) {
+			if(e.getClickedBlock() == null) break;
+			if(set.contains(e.getClickedBlock())) {
+				
+				for(Player online : Bukkit.getOnlinePlayers())
+					for(Block b : set)
+						online.sendBlockChange(b.getLocation(), b.getType(), (byte) b.getData());
+				
+				Claim.fakeBlocks.remove(set);
+				break;
+			}
+		}
 
 		if(e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
@@ -131,12 +146,6 @@ public class ClaimProtection implements Listener {
 			return;
 
 		Block broken = e.getBlock();
-
-		if(broken.getType() == Material.SEA_LANTERN) {
-			e.setCancelled(true);
-			e.getBlock().setType(Material.AIR);
-			Claim.resetDrawnBorders(broken.getChunk(), e.getPlayer());
-		}
 
 		if (this.isInAClaim(broken) == null)
 			return;

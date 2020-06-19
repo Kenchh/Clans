@@ -2,7 +2,8 @@ package me.rey.clans.commands.base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -22,14 +23,14 @@ import me.rey.clans.enums.CommandType;
 import me.rey.clans.events.clans.ClanTerritoryClaimEvent;
 
 public class Claim extends SubCommand {
-
-	public static HashMap<Block, Material> borderBlocksDrawnOver = new HashMap<Block, Material>();
+	
+	public static ArrayList<Set<Block>> fakeBlocks = new ArrayList<>();
 
 	public Claim() {
 		super("claim", "Claim a piece of land", "/c claim", ClansRank.ADMIN, CommandType.CLAN, true);
 	}
 
-	@Override
+	@Override	
 	public void build(ClansCommand source, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		Chunk standing = player.getLocation().getChunk();
@@ -97,16 +98,17 @@ public class Claim extends SubCommand {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void drawBorders(Chunk standing, Player p) {
+		Set<Block> toReplace = new HashSet<>();
+		
 		for(int a=0; a<=15; a++) {
-
+			
 			Block blockC = standing.getBlock(a, 0, 0);
 			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
 			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
-
-			Material m = block.getType();
-			borderBlocksDrawnOver.put(block, m);
-			block.setType(Material.SEA_LANTERN);
+			
+			toReplace.add(block);
 		}
 
 		for(int b=0; b<=14; b++) {
@@ -114,10 +116,8 @@ public class Claim extends SubCommand {
 			Block blockC = standing.getBlock(0, 0, b + 1);
 			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
 			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
-
-			Material m = block.getType();
-			borderBlocksDrawnOver.put(block, m);
-			block.setType(Material.SEA_LANTERN);
+			
+			toReplace.add(block);
 		}
 
 		for(int c=0; c<=14; c++) {
@@ -125,9 +125,8 @@ public class Claim extends SubCommand {
 			Block blockC = standing.getBlock(15, 0, c + 1);
 			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
 			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
-			Material m = block.getType();
-			borderBlocksDrawnOver.put(block, m);
-			block.setType(Material.SEA_LANTERN);
+		
+			toReplace.add(block);
 		}
 
 		for(int d=0; d<=13; d++) {
@@ -136,28 +135,14 @@ public class Claim extends SubCommand {
 			Block highestblock = p.getWorld().getHighestBlockAt(blockC.getX(), blockC.getZ());
 			Block block = p.getWorld().getBlockAt(highestblock.getX(), highestblock.getY() - 1, highestblock.getZ());
 
-			Material m = block.getType();
-			borderBlocksDrawnOver.put(block, m);
-			block.setType(Material.SEA_LANTERN);
+			toReplace.add(block);
 		}
-	}
+		
+		for(Player online : Bukkit.getOnlinePlayers())
+			for(Block b : toReplace)
+				online.sendBlockChange(b.getLocation(), Material.SEA_LANTERN, (byte) 0);
 
-	public static void resetDrawnBorders(Chunk chunkWithDrawnBorders, Player p) {
-
-		ArrayList<Block> drawnBlocksToRemove = new ArrayList<Block>();
-
-		for(Block block : borderBlocksDrawnOver.keySet()) {
-			if(block.getChunk() == chunkWithDrawnBorders) {
-				Block drawnblock = chunkWithDrawnBorders.getBlock(block.getX(), block.getY(), block.getZ());
-				drawnblock.setType(borderBlocksDrawnOver.get(block));
-				drawnBlocksToRemove.add(block);
-			}
-		}
-
-		for(Block b : drawnBlocksToRemove) {
-			borderBlocksDrawnOver.remove(b);
-		}
-
+		fakeBlocks.add(toReplace);
 	}
 
 	@Override
