@@ -20,36 +20,37 @@ public class PlayerChat implements Listener {
 		if(e.isCancelled()) return;
 		e.setCancelled(true);
 		
+		String prefix = "Chat";
+		final String defPrefix = prefix;
 		if(ClanChat.inChat.contains(e.getPlayer().getUniqueId()) || AllyChat.inChat.contains(e.getPlayer().getUniqueId())) {
 			Clan self = new ClansPlayer(e.getPlayer()).getClan();
 			if(self == null) {
 				ClanChat.inChat.remove(e.getPlayer().getUniqueId());
-				AllyChat.inChat.remove(e.getPlayer().getUniqueId());
-				return;
+				AllyChat.inChat.remove(e.getPlayer().getUniqueId());	
 			}
 			
-			if(AllyChat.inChat.contains(e.getPlayer().getUniqueId())) {
+			else if(AllyChat.inChat.contains(e.getPlayer().getUniqueId())) {
 				self.shoutToRelation(ClanRelations.ALLY, e.getPlayer(), e.getMessage());
-				return;
+				prefix = "Clan Chat";
 			}
 			
-			if(ClanChat.inChat.contains(e.getPlayer().getUniqueId())) {
+			else if(ClanChat.inChat.contains(e.getPlayer().getUniqueId())) {
 				self.shoutToRelation(ClanRelations.SELF, e.getPlayer(), e.getMessage());
-				return;
+				prefix = "Ally Chat";
 			}
 			
-			return;
 		}
 		
 		Player p = e.getPlayer();
 
-		
-		for(Player online : Bukkit.getOnlinePlayers()) {
-			ClansPlayer toSend = new ClansPlayer(online);
-			toSend.getPlayer().sendMessage(Text.color(Text.getPrefix(e.getPlayer()) + Text.formatClanColors(p, online) + " &f") + e.getMessage());
+		if(defPrefix.equals(prefix)) {
+			for(Player online : Bukkit.getOnlinePlayers()) {
+				ClansPlayer toSend = new ClansPlayer(online);
+				toSend.getPlayer().sendMessage(Text.color(Text.getPrefix(e.getPlayer()) + Text.formatClanColors(p, online) + " &f") + e.getMessage());
+			}
 		}
 		
-		Text.echo("Chat", p.getName() + ": " + e.getMessage());
+		Text.echo(prefix, p.getName() + ": " + e.getMessage());
 	}
 
 }
