@@ -31,12 +31,12 @@ public class PlayerChat implements Listener {
 			
 			else if(AllyChat.inChat.contains(e.getPlayer().getUniqueId())) {
 				self.shoutToRelation(ClanRelations.ALLY, e.getPlayer(), e.getMessage());
-				prefix = "Clan Chat";
+				prefix = "Ally Chat";
 			}
 			
 			else if(ClanChat.inChat.contains(e.getPlayer().getUniqueId())) {
 				self.shoutToRelation(ClanRelations.SELF, e.getPlayer(), e.getMessage());
-				prefix = "Ally Chat";
+				prefix = "Clan Chat";
 			}
 			
 		}
