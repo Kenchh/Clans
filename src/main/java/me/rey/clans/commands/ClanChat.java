@@ -30,12 +30,6 @@ public class ClanChat extends ClansCommand {
 			boolean success = inChat.contains(p.getUniqueId()) ? inChat.remove(p.getUniqueId()) : inChat.add(p.getUniqueId());
 			if(success) this.sendMessageWithPrefix("Chat", "Clan Chat: " + (inChat.contains(p.getUniqueId()) ? "&aEnabled" : "&cDisabled"));
 			
-			/*
-			 *  ASDSADASDSADSAAAAAAAAAAAAADSADDSADADASDAS
-			 */
-			p.getWorld().dropItem(p.getLocation(), CustomExplosion.BOMB.getItem().get());
-			p.getWorld().dropItem(p.getLocation(), CustomExplosion.C4.getItem().get());
-			
 			return;
 		}
 		
