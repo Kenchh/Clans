@@ -1,3 +1,4 @@
 # Clans Plugin for Reinforced MC
 
-Handles the clans system for Warriors gamemode
+* `Creation Date: 28th July 2020`
+* `Project Position: Assistant`
