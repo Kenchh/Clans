@@ -41,7 +41,7 @@ public class GuiClan extends GuiEditable {
 		
 		// Invites item
 		List<String> invitesLore = Arrays.asList("",
-				"&7Clans have a max size of &e" + References.MAX_MEMBERS + "&7members",
+				"&7Clans have a max size of &e" + References.MAX_MEMBERS + "&7 members",
 				"&7You currently have &e" + clan.getPlayers(false).size() + "&7 members",
 				"&7More members in your clan will allow you to",
 				"&7claim more land, but it will also increase",
@@ -125,7 +125,6 @@ public class GuiClan extends GuiEditable {
 		List<String> commandsLore = Arrays.asList("",
 				"&e/c help &fLists Clans Commands",
 				"&e/c ally <clan> &fRequest Ally",
-				"&e/c truce <clan> &fRequest Truce",
 				"&e/c neutral <clan> &fRevoke Ally or Truce",
 				"&e/c sethome &fSet Home Bed",
 				"&e/c home &fTeleport to Home Bed",
@@ -139,7 +138,8 @@ public class GuiClan extends GuiEditable {
 		}, 8);
 		
 		
-		int[] playerPositions = {20, 21, 22, 23, 24, 29, 30, 31, 32 , 33, 39, 40, 41};
+		final int row = 9;
+		int[] playerPositions = {21, 22, 23, 21 + row, 22 + row, 23 + row, 21 + row * 2, 22 + row * 2, 23 + row * 2};
 		int index = 0;
 		/*
 		 *  ONLINE PLAYERS

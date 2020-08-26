@@ -28,5 +28,4 @@ public class CombatBaseRelation implements Listener {
 		e.setCancelled(true);
 		cp.sendMessageWithPrefix("Combat", "You cannot hit " + relation.getPlayerColor() + damaged.getPlayer().getName() + "&r.");
 	}
-
 }

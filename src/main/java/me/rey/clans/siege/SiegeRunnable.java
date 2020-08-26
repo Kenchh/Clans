@@ -35,7 +35,7 @@ public class SiegeRunnable extends BukkitRunnable {
 		 * NOT displaying action bar if the clan is being sieged by more than 1 other clan(s)
 		 */
 		
-		Clan newSieged = Main.getInstance().getSQLManager().getClan(sieged.getUniqueId());
+		Clan newSieged = Main.getInstance().getClan(sieged.getUniqueId());
 		Iterator<Siege> iterator = newSieged.getClansSiegingSelf().iterator();
 		if(iterator.hasNext() || !sieging.getUniqueId().equals(iterator.next().getClanSieging().getUniqueId())) {
 			for(UUID uuid : newSieged.getPlayers().keySet()) {
@@ -52,7 +52,7 @@ public class SiegeRunnable extends BukkitRunnable {
 		/*
 		 * NOT displaying action bar if the clan is SIEGING more than 1 clan
 		 */
-		Clan newSieger = Main.getInstance().getSQLManager().getClan(sieging.getUniqueId());
+		Clan newSieger = Main.getInstance().getClan(sieging.getUniqueId());
 		if(newSieger.isBeingSieged()) return;
 		Iterator<Siege> iterator2 = newSieger.getClansSiegedBySelf().iterator();
 		if(iterator2.hasNext() && sieged.getUniqueId().equals(iterator2.next().getClanSieged().getUniqueId())) {

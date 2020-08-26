@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.rey.clans.Main;
 import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
@@ -38,7 +39,7 @@ public class Join extends SubCommand {
 		}
 
 		HashMap<UUID, ArrayList<UUID>> players = Invite.players;
-		Clan toJoin = this.sql().getClan(args[0]);
+		Clan toJoin = Main.getInstance().getClan(args[0]);
 		if(toJoin == null) {
 			ErrorCheck.clanNotExist(sender);
 			return;

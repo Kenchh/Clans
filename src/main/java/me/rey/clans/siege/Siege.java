@@ -50,8 +50,8 @@ public class Siege {
 		sieges.put(sieger.getUniqueId(), toRemove);
 		runnable.cancel();
 		
-		Clan newSieged = Main.getInstance().getSQLManager().getClan(sieged.getUniqueId());
-		Clan newSieger = Main.getInstance().getSQLManager().getClan(sieger.getUniqueId());
+		Clan newSieged = Main.getInstance().getClan(sieged.getUniqueId());
+		Clan newSieger = Main.getInstance().getClan(sieger.getUniqueId());
 		
 		try {
 			for(UUID uuid : newSieged.getPlayers().keySet()) {

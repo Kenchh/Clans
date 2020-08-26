@@ -2,6 +2,7 @@ package me.rey.clans.events;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -37,6 +38,9 @@ import me.rey.clans.clans.Clan;
 import me.rey.clans.clans.ClansPlayer;
 import me.rey.clans.clans.ClansRank;
 import me.rey.clans.commands.base.Claim;
+import me.rey.clans.events.clans.PlayerEditClaimEvent;
+import me.rey.clans.events.clans.PlayerEditClaimEvent.ClaimPermission;
+import me.rey.clans.events.clans.PlayerEditClaimEvent.EditAction;
 import me.rey.clans.events.custom.ContainerOpenEvent;
 import me.rey.clans.utils.ErrorCheck;
 import me.rey.clans.utils.References;
@@ -50,24 +54,38 @@ public class ClaimProtection implements Listener {
 	 * EnchantItemEvent - PrepareItemEnchantEvent - PlayerFishEvent
 	 */
 	
-	List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER, Material.ANVIL);
+	public static List<Material> containers = Arrays.asList(Material.DISPENSER, Material.CHEST, Material.TRAPPED_CHEST, Material.FURNACE, Material.DROPPER, Material.HOPPER, Material.ANVIL);
 
-	List<Material> interactables = Arrays.asList(
+	public static List<Material> interactables = Arrays.asList(
 			/* Fence Gates */ 	Material.FENCE_GATE, Material.ACACIA_FENCE_GATE, Material.BIRCH_FENCE_GATE, Material.DARK_OAK_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.SPRUCE_FENCE_GATE,
 			/* Doors */ 		Material.WOODEN_DOOR, Material.ACACIA_DOOR, Material.BIRCH_DOOR, Material.DARK_OAK_DOOR, Material.JUNGLE_DOOR, Material.SPRUCE_DOOR,
 			/* Etc. */			Material.WOOD_BUTTON, Material.STONE_BUTTON, Material.TRAP_DOOR, Material.LEVER,
 			/* Redstone */		Material.REDSTONE_COMPARATOR, Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF, Material.DIODE, Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
 			/* Press. Plates */	Material.WOOD_PLATE, Material.STONE_PLATE, Material.IRON_PLATE, Material.GOLD_PLATE);
 
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
+		
+		for(Set<Block> set : Claim.fakeBlocks) {
+			if(e.getClickedBlock() == null) break;
+			if(set.contains(e.getClickedBlock())) {
+				
+				for(Player online : Bukkit.getOnlinePlayers())
+					for(Block b : set)
+						online.sendBlockChange(b.getLocation(), b.getType(), (byte) b.getData());
+				
+				Claim.fakeBlocks.remove(set);
+				break;
+			}
+		}
 
 		if(e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
 		if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(References.HOME_BLOCK)) e.setCancelled(true);
 		Block clicked = e.getClickedBlock();
 
-		if (this.isInOtherClaim(e.getPlayer(), clicked) != null) {
+		if (isInOtherClaim(e.getPlayer(), clicked) != null) {
 
 			if(containers.contains(clicked.getType()) || interactables.contains(clicked.getType())) {
 				ContainerOpenEvent event = new ContainerOpenEvent(e.getPlayer(), clicked, false);
@@ -76,10 +94,18 @@ public class ClaimProtection implements Listener {
 					return;
 			}
 
-			Clan found = this.isInOtherClaim(e.getPlayer(), clicked);
+			Clan found = isInOtherClaim(e.getPlayer(), clicked);
+			
+			PlayerEditClaimEvent event = new PlayerEditClaimEvent(found, e.getPlayer(), ClaimPermission.DENY, EditAction.PLACE, e.getPlayer().getItemInHand(), e.getClickedBlock());
+			Bukkit.getServer().getPluginManager().callEvent(event);
+			
+			if(event.getPermission().equals(ClaimPermission.ALLOW))
+				return;
+			
 			ErrorCheck.noPermissionInClaim(e.getPlayer(), found);
 			e.setCancelled(true);
 			return;
+			
 		} else {
 
 			// IRON DOOR
@@ -121,12 +147,6 @@ public class ClaimProtection implements Listener {
 
 		Block broken = e.getBlock();
 
-		if(broken.getType() == Material.SEA_LANTERN) {
-			e.setCancelled(true);
-			e.getBlock().setType(Material.AIR);
-			Claim.resetDrawnBorders(broken.getChunk(), e.getPlayer());
-		}
-
 		if (this.isInAClaim(broken) == null)
 			return;
 
@@ -158,6 +178,13 @@ public class ClaimProtection implements Listener {
 
 		if (self.hasClan() && self.getClan().compare(other))
 			return;
+		
+		PlayerEditClaimEvent event = new PlayerEditClaimEvent(isNearOtherClaim(e.getPlayer(), e.getBlock()), e.getPlayer(), ClaimPermission.DENY, EditAction.BREAK, e.getPlayer().getItemInHand(), e.getBlock());
+		Bukkit.getServer().getPluginManager().callEvent(event);
+		
+		if(event.getPermission().equals(ClaimPermission.ALLOW))
+			return;
+		
 		ErrorCheck.noPermissionInClaim(e.getPlayer(), other);
 		e.setCancelled(true);
 	}
@@ -167,49 +194,29 @@ public class ClaimProtection implements Listener {
 		if (e.getBlock() == null || e.getBlock().getType().equals(Material.AIR))
 			return;
 
-		ClansPlayer cp = new ClansPlayer(e.getPlayer());
-
-		/*
-		 * Check if they placed block NEXT to a claim
-		 */
-		World w = e.getBlock().getWorld();
-		Block[] sides = new Block[8];
-		int x = e.getBlock().getX(), y = e.getBlock().getY(), z = e.getBlock().getZ();
-		sides[0] = w.getBlockAt(new Location(w, x - 1, y, z));
-		sides[1] = w.getBlockAt(new Location(w, x + 1, y, z)); // sides
-		sides[2] = w.getBlockAt(new Location(w, x, y, z - 1));
-		sides[3] = w.getBlockAt(new Location(w, x, y, z + 1)); // sides
-		sides[4] = w.getBlockAt(new Location(w, x + 1, y, z + 1));
-		sides[5] = w.getBlockAt(new Location(w, x + 1, y, z - 1)); // corners
-		sides[6] = w.getBlockAt(new Location(w, x - 1, y, z + 1));
-		sides[7] = w.getBlockAt(new Location(w, x - 1, y, z - 1)); // corners
-
-		for (Block b : sides) {
-			Chunk chunk = b.getChunk();
-			if (chunk.equals(e.getBlock().getChunk()))
-				continue;
-			if (isInClaim(chunk) == null)
-				continue;
-
-			Clan other = isInClaim(chunk);
-			if (cp.hasClan() && other.compare(cp.getClan()))
-				continue;
-
-			ErrorCheck.noPermissionNearClaim(e.getPlayer(), other);
+		if (isNearOtherClaim(e.getPlayer(), e.getBlock()) != null) {
+			
+			PlayerEditClaimEvent event = new PlayerEditClaimEvent(isNearOtherClaim(e.getPlayer(), e.getBlock()),
+					e.getPlayer(), ClaimPermission.DENY, EditAction.PLACE, e.getPlayer().getItemInHand(), e.getBlock());
+			Bukkit.getServer().getPluginManager().callEvent(event);
+			
+			if(event.getPermission().equals(ClaimPermission.ALLOW))
+				return;
+			
+			ErrorCheck.noPermissionNearClaim(e.getPlayer(), isNearOtherClaim(e.getPlayer(), e.getBlock()));
 			e.setCancelled(true);
-			break;
+			return;
 		}
-		// END
 
 		/*
 		 * CHECK if they placed INSIDE claim
 		 */
-		Block placed = e.getBlock();
-		if (this.isInOtherClaim(e.getPlayer(), placed) == null)
-			return;
-
-		ErrorCheck.noPermissionInClaim(e.getPlayer(), this.isInOtherClaim(e.getPlayer(), placed));
-		e.setCancelled(true);
+//		Block placed = e.getBlock();
+//		if (this.isInOtherClaim(e.getPlayer(), placed) == null)
+//			return;
+//
+//		ErrorCheck.noPermissionInClaim(e.getPlayer(), this.isInOtherClaim(e.getPlayer(), placed));
+//		e.setCancelled(true);
 	}
 
 	@EventHandler
@@ -256,14 +263,45 @@ public class ClaimProtection implements Listener {
 	public void bedEnter(PlayerBedEnterEvent e) {
 		e.setCancelled(true);
 	}
+	
+	public static Clan isNearOtherClaim(Player player, Block block) {
+		ClansPlayer cp = new ClansPlayer(player);
+		
+		World w = block.getWorld();
+		Block[] sides = new Block[8];
+		int x = block.getX(), y = block.getY(), z = block.getZ();
+		sides[0] = w.getBlockAt(new Location(w, x - 1, y, z));
+		sides[1] = w.getBlockAt(new Location(w, x + 1, y, z)); // sides
+		sides[2] = w.getBlockAt(new Location(w, x, y, z - 1));
+		sides[3] = w.getBlockAt(new Location(w, x, y, z + 1)); // sides
+		sides[4] = w.getBlockAt(new Location(w, x + 1, y, z + 1));
+		sides[5] = w.getBlockAt(new Location(w, x + 1, y, z - 1)); // corners
+		sides[6] = w.getBlockAt(new Location(w, x - 1, y, z + 1));
+		sides[7] = w.getBlockAt(new Location(w, x - 1, y, z - 1)); // corners
 
-	private Clan isInOtherClaim(Player player, Block block) {
+		for (Block b : sides) {
+			Chunk chunk = b.getChunk();
+			if (chunk.equals(block.getChunk()))
+				continue;
+			if (isInClaim(chunk) == null)
+				continue;
+
+			Clan other = isInClaim(chunk);
+			if (cp.hasClan() && other.compare(cp.getClan()))
+				continue;
+		
+			return other;
+		}
+		return null;
+	}
+
+	public static Clan isInOtherClaim(Player player, Block block) {
 		Clan owner = Main.getInstance().getClanFromTerritory(block.getChunk());
 		ClansPlayer self = new ClansPlayer(player);
 		return owner == null ? null : (self.hasClan() && self.getClan().compare(owner) ? null : owner);
 	}
 
-	private Clan isInClaim(Chunk chunk) {
+	public static Clan isInClaim(Chunk chunk) {
 		return Main.getInstance().getClanFromTerritory(chunk);
 	}
 

@@ -12,7 +12,7 @@ public class References {
 	 */
 	public static final int MAX_ALLIES = 2;
 	public static final int MAX_TRUCES = 1;
-	public static final int MAX_MEMBERS = 13;
+	public static final int MAX_MEMBERS = 9;
 	public static final int MAX_TERRITORY = 8;
 	public static final long MAX_ENERGY = 10000;
 	public static final double MAX_ENERGY_DAYS = 7.0;

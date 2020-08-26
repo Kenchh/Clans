@@ -884,8 +884,8 @@ public class SQLManager {
 			while (rs.next()) {
 				HashMap<String, Object> data = new HashMap<String, Object>();
 
-				data.put("clan", rs.getObject("clan"));
-				data.put("gold", rs.getObject("gold"));
+				data.put("clan", rs.getString("clan"));
+				data.put("gold", rs.getInt("gold"));
 
 				pd.put(UUID.fromString((String) rs.getObject("uuid")), data);
 			}
@@ -975,10 +975,12 @@ public class SQLManager {
 		
 		try {
 			
-			if(Main.playerdata.get(player).get("clan") == null)
-				return false;
+			String clan = (String) Main.playerdata.get(player).get("clan");
+			if(clan == null) return false;
 			
-			return true;
+			if(clanExists(UUID.fromString(clan))) return true;
+			return false;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

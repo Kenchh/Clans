@@ -78,7 +78,8 @@ public class GuiClanInfo extends GuiEditable {
 			
 		}, 4);
 		
-		int[] playerPositions = {20, 21, 22, 23, 24, 29, 30, 31, 32 , 33, 39, 40, 41};
+		final int row = 9;
+		int[] playerPositions = {21, 22, 23, 21 + row, 22 + row, 23 + row, 21 + row * 2, 22 + row * 2, 23 + row * 2};
 		int index = 0;
 		/*
 		 *  ONLINE PLAYERS
